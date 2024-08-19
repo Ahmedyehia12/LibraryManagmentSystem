@@ -3,87 +3,229 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Library Management System</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Library Management</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 1em 0;
+            text-align: center;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        nav ul li {
+            display: inline;
+            margin: 0 1em;
+        }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        main {
+            padding: 1em;
+        }
+
+        section {
+            margin-bottom: 2em;
+        }
+
+        h1 {
+            margin: 0 0 1em 0;
+        }
+
+        h2 {
+            border-bottom: 2px solid #333;
+            padding-bottom: 0.5em;
+        }
+
+        /* Form Styles */
+        form {
+            background-color: #fff;
+            padding: 1em;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2em;
+        }
+
+        label {
+            display: block;
+            margin: 0.5em 0;
+        }
+
+        input {
+            width: calc(100% - 2em);
+            padding: 0.5em;
+            margin-bottom: 1em;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 0.5em 1em;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #555;
+        }
+
+        /* List and Link Styles */
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        ul li {
+            background-color: #fff;
+            padding: 1em;
+            border-radius: 5px;
+            margin-bottom: 0.5em;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        ul li a {
+            color: #333;
+            text-decoration: none;
+            margin: 0 0.5em;
+        }
+
+        ul li a:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer Styles */
+        footer {
+            text-align: center;
+            padding: 1em 0;
+            background-color: #333;
+            color: #fff;
+        }
+    </style>
 </head>
 <body>
     <header>
         <h1>Library Management System</h1>
-          <nav>
-              <ul>
-                  <li><a href="index.html">Home</a></li>
-              </ul>
-          </nav>
     </header>
     
     <main>
-        <section id="view-books">
-            <h2>Books in Library</h2>
+        <!-- Add Book Form -->
+        <form action="/add_book" method="post">
+            <input type="text" name="title" placeholder="Book Title" required>
+            <input type="text" name="author" placeholder="Author" required>
+            <input type="text" name="isbn" placeholder="ISBN" required>
+            <button type="submit">Add Book</button>
+        </form>
+
+        <!-- Search by ISBN Form -->
+        <section>
+            <h2>Search by ISBN</h2>
+            <form id="isbn-search-form">
+                <input type="text" id="isbn-search" placeholder="Enter ISBN">
+                <button type="submit">Search</button>
+            </form>
+        </section>
+
+        <!-- Search by Keyword Form -->
+        <section>
+            <h2>Search by Keyword</h2>
+            <form id="keyword-search-form">
+                <input type="text" id="keyword-search" placeholder="Enter keyword (Title, Author, or ISBN)">
+                <button type="submit">Search</button>
+            </form>
+        </section>
+
+        <!-- Book Inventory -->
+        <section>
+            <h2>Book Inventory</h2>
             <table>
                 <thead>
                     <tr>
-                        <th>Title</th>
+                        <th>Book Title</th>
                         <th>Author</th>
-                        <th>Year</th>
-                        <th>Genre</th>
                         <th>ISBN</th>
                         <th>Status</th>
-                        <th>Borrow/Return</th>
-                        <th>Remove</th> <!-- Add Action column for Delete button -->
+                        <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <!-- Book entries will go here -->
+                <tbody id="book-list">
+                    <!-- Example book entries -->
+                    {% for book in books %}
+                        <tr data-isbn="{{ book.isbn }}" data-title="{{ book.title }}" data-author="{{ book.author }}">
+                            <td>{{ book.title }}</td>
+                            <td>{{ book.author }}</td>
+                            <td>{{ book.isbn }}</td>
+                            <td>{{ book.status }}</td>
+                            <td>
+                                <a href="/remove_book/{{ book.isbn }}">Remove</a>
+                                {% if book.status == 'Available' %}
+                                    <a href="/borrow_book/{{ book.isbn }}">Borrow</a>
+                                {% else %}
+                                    <a href="/return_book/{{ book.isbn }}">Return</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </section>
-
-        
-      <section id="search-books">
-          <h2>Search Books</h2>
-          <form id="search-form">
-              <label for="search-query">Search by Title, Author, or Genre:</label>
-              <input type="text" id="search-query" name="search-query" placeholder="Enter book title, author, or genre">
-              <button type="submit">Search</button>
-          </form>
-
-          <h2>Search by ISBN</h2>
-          <form id="isbn-search-form">
-              <label for="isbn-query">Search by ISBN:</label>
-              <input type="text" id="isbn-query" name="isbn-query" placeholder="Enter book ISBN">
-              <button type="submit">Search</button>
-          </form>
-      </section>
-
-        
-      <section id="add-book">
-          <h2>Add New Book</h2>
-          <form id="book-form">
-              <label for="title">Title:</label>
-              <input type="text" id="title" name="title" required>
-              
-              <label for="author">Author:</label>
-              <input type="text" id="author" name="author" required>
-              
-              <label for="year">Year:</label>
-              <input type="number" id="year" name="year" required>
-              
-              <label for="genre">Genre:</label>
-              <input type="text" id="genre" name="genre" required>
-              
-              <label for="isbn">ISBN:</label>
-              <input type="text" id="isbn" name="isbn" required> <!-- New ISBN field -->
-              
-              <button type="submit">Add Book</button>
-          </form>
-</section>
-
     </main>
-    
-    <footer>
-        <p>&copy; 2024 Library Management System</p>
-    </footer>
-    
-    <script src="script.js"></script>
+
+    <!-- JavaScript for Filtering Books by ISBN -->
+    <script>
+        document.getElementById('isbn-search-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const isbn = document.getElementById('isbn-search').value.trim();
+            const books = document.querySelectorAll('#book-list li');
+
+            books.forEach(book => {
+                if (book.getAttribute('data-isbn') === isbn || isbn === '') {
+                    book.style.display = 'list-item';
+                } else {
+                    book.style.display = 'none';
+                }
+            });
+        });
+    </script>
+
+    <!-- JavaScript for Filtering Books by Keyword -->
+    <script>
+        document.getElementById('keyword-search-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const keyword = document.getElementById('keyword-search').value.trim().toLowerCase();
+            const books = document.querySelectorAll('#book-list li');
+
+            books.forEach(book => {
+                const title = book.getAttribute('data-title').toLowerCase();
+                const author = book.getAttribute('data-author').toLowerCase();
+                const isbn = book.getAttribute('data-isbn').toLowerCase();
+
+                if (title.includes(keyword) || author.includes(keyword) || isbn.includes(keyword)) {
+                    book.style.display = 'list-item';
+                } else {
+                    book.style.display = 'none';
+                }
+            });
+        });
+    </script>
 </body>
 </html>
