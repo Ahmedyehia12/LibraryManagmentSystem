@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management</title>
+</head>
+<body>
+    <h1>Library Management System</h1>
+    <form action="/add_book" method="post">
+        <input type="text" name="title" placeholder="Book Title" required>
+        <input type="text" name="author" placeholder="Author" required>
+        <input type="text" name="isbn" placeholder="ISBN" required>
+        <button type="submit">Add Book</button>
+    </form>
+    <h2>Book Inventory</h2>
+    <ul>
+        {% for book in books %}
+            <li>{{ book.title }} by {{ book.author }} (ISBN: {{ book.isbn }}) 
+            <a href="/remove_book/{{ book.isbn }}">Remove</a></li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
