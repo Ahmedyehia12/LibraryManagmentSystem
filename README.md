@@ -38,7 +38,7 @@ The project directory contains the following files:
 └── script.js         # JavaScript file for handling form submission and book addition
 ```
 
-<h2>index.html:</h2>
+<h3>index.html:</h3>
 The main HTML file for the application. It includes:
 <ul>
   <li>Header: Contains the site title and navigation links.</li>
@@ -49,7 +49,7 @@ The main HTML file for the application. It includes:
   </ul>
   <li>Footer: Displays the copyright information.</li>
 </ul>
-<h2>view-books.html:</h2>
+<h3>view-books.html:</h3>
 An HTML file similar to index.html but intended solely for viewing books. It features:
 <ul>
   <li>Header: Same as index.html.</li>
@@ -59,7 +59,7 @@ An HTML file similar to index.html but intended solely for viewing books. It fea
   </ul>
   <li>Footer: Same as index.html.</li>
 </ul>
-<h2>styles.css</h2>
+<h3>styles.css</h3>
 CSS file for styling the application. Key styles include:
 <ul>
   <li>Global Styles: Font settings, margins, and padding.</li>
@@ -69,7 +69,7 @@ CSS file for styling the application. Key styles include:
   <li>Footer: Text alignment and background color.</li>
 </ul>
 
-<h2>script.js</h2>
+<h3>script.js</h3>
 JavaScript file that handles:
 <ul>
   <li>Form Submission: Prevents the default form submission behavior, extracts values from the form fields, and adds a new row to the table in index.html.</li>
