@@ -4,47 +4,175 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Library Management</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 1em 0;
+            text-align: center;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        nav ul li {
+            display: inline;
+            margin: 0 1em;
+        }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        main {
+            padding: 1em;
+        }
+
+        section {
+            margin-bottom: 2em;
+        }
+
+        h1 {
+            margin: 0 0 1em 0;
+        }
+
+        h2 {
+            border-bottom: 2px solid #333;
+            padding-bottom: 0.5em;
+        }
+
+        /* Form Styles */
+        form {
+            background-color: #fff;
+            padding: 1em;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2em;
+        }
+
+        label {
+            display: block;
+            margin: 0.5em 0;
+        }
+
+        input {
+            width: calc(100% - 2em);
+            padding: 0.5em;
+            margin-bottom: 1em;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 0.5em 1em;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #555;
+        }
+
+        /* List and Link Styles */
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        ul li {
+            background-color: #fff;
+            padding: 1em;
+            border-radius: 5px;
+            margin-bottom: 0.5em;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        ul li a {
+            color: #333;
+            text-decoration: none;
+            margin: 0 0.5em;
+        }
+
+        ul li a:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer Styles */
+        footer {
+            text-align: center;
+            padding: 1em 0;
+            background-color: #333;
+            color: #fff;
+        }
+    </style>
 </head>
 <body>
-    <h1>Library Management System</h1>
+    <header>
+        <h1>Library Management System</h1>
+    </header>
     
-    <!-- Add Book Form -->
-    <form action="/add_book" method="post">
-        <input type="text" name="title" placeholder="Book Title" required>
-        <input type="text" name="author" placeholder="Author" required>
-        <input type="text" name="isbn" placeholder="ISBN" required>
-        <button type="submit">Add Book</button>
-    </form>
+    <main>
+        <!-- Add Book Form -->
+        <form action="/add_book" method="post">
+            <input type="text" name="title" placeholder="Book Title" required>
+            <input type="text" name="author" placeholder="Author" required>
+            <input type="text" name="isbn" placeholder="ISBN" required>
+            <button type="submit">Add Book</button>
+        </form>
 
-    <!-- Search by ISBN Form -->
-    <h2>Search by ISBN</h2>
-    <form id="isbn-search-form">
-        <input type="text" id="isbn-search" placeholder="Enter ISBN">
-        <button type="submit">Search</button>
-    </form>
+        <!-- Search by ISBN Form -->
+        <section>
+            <h2>Search by ISBN</h2>
+            <form id="isbn-search-form">
+                <input type="text" id="isbn-search" placeholder="Enter ISBN">
+                <button type="submit">Search</button>
+            </form>
+        </section>
 
-    <!-- Search by Keyword Form -->
-    <h2>Search by Keyword</h2>
-    <form id="keyword-search-form">
-        <input type="text" id="keyword-search" placeholder="Enter keyword (Title, Author, or ISBN)">
-        <button type="submit">Search</button>
-    </form>
+        <!-- Search by Keyword Form -->
+        <section>
+            <h2>Search by Keyword</h2>
+            <form id="keyword-search-form">
+                <input type="text" id="keyword-search" placeholder="Enter keyword (Title, Author, or ISBN)">
+                <button type="submit">Search</button>
+            </form>
+        </section>
 
-    <!-- Book Inventory -->
-    <h2>Book Inventory</h2>
-    <ul id="book-list">
-        {% for book in books %}
-            <li data-isbn="{{ book.isbn }}" data-title="{{ book.title }}" data-author="{{ book.author }}">
-                {{ book.title }} by {{ book.author }} (ISBN: {{ book.isbn }}) - Status: {{ book.status }} 
-                <a href="/remove_book/{{ book.isbn }}">Remove</a> | 
-                {% if book.status == 'Available' %}
-                    <a href="/borrow_book/{{ book.isbn }}">Borrow</a>
-                {% else %}
-                    <a href="/return_book/{{ book.isbn }}">Return</a>
-                {% endif %}
-            </li>
-        {% endfor %}
-    </ul>
+        <!-- Book Inventory -->
+        <section>
+            <h2>Book Inventory</h2>
+            <ul id="book-list">
+                <!-- Example book entries -->
+                {% for book in books %}
+                    <li data-isbn="{{ book.isbn }}" data-title="{{ book.title }}" data-author="{{ book.author }}">
+                        {{ book.title }} by {{ book.author }} (ISBN: {{ book.isbn }}) - Status: {{ book.status }} 
+                        <a href="/remove_book/{{ book.isbn }}">Remove</a> | 
+                        {% if book.status == 'Available' %}
+                            <a href="/borrow_book/{{ book.isbn }}">Borrow</a>
+                        {% else %}
+                            <a href="/return_book/{{ book.isbn }}">Return</a>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </section>
+    </main>
 
     <!-- JavaScript for Filtering Books by ISBN -->
     <script>
