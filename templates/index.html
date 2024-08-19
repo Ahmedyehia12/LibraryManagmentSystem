@@ -3,85 +3,274 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Library Management</title>
+    <title>Library Management System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .tabs {
+            margin-bottom: 20px;
+            display: flex;
+        }
+        .tabs button {
+            background-color: #007bff;
+            color: white;
+            border: 1px solid #007bff;
+            padding: 10px 20px;
+            cursor: pointer;
+            margin-right: 5px;
+            border-radius: 5px;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        .tabs button.active {
+            background-color: #0056b3;
+            border-bottom: 1px solid transparent;
+        }
+        .tabs button:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+        .tab-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .flash-message {
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .flash-message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .flash-message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .book-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .book-item div {
+            flex-grow: 1;
+        }
+        .book-item span {
+            font-weight: bold;
+        }
+        .remove-btn {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .remove-btn:hover {
+            background-color: #c82333;
+        }
+        .refresh-btn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .refresh-btn:hover {
+            background-color: #218838;
+        }
+        .search-results {
+            margin-top: 20px;
+        }
+        .search-results ul {
+            list-style: none;
+            padding: 0;
+        }
+        .search-results li {
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #fff;
+        }
+        .overdue {
+            color: red;
+        }
+        .button-container {
+            display: flex;
+            justify-content: flex-end;
+        }
+        .button-container button {
+            margin-left: 10px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Library Management System</h1>
-    
-    <!-- Add Book Form -->
-    <form action="/add_book" method="post">
-        <input type="text" name="title" placeholder="Book Title" required>
-        <input type="text" name="author" placeholder="Author" required>
-        <input type="text" name="isbn" placeholder="ISBN" required>
-        <button type="submit">Add Book</button>
-    </form>
+    <div class="container">
+        <!-- Flash messages -->
+        {% with messages = get_flashed_messages(with_categories=True) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash-message {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
 
-    <!-- Search by ISBN Form -->
-    <h2>Search by ISBN</h2>
-    <form id="isbn-search-form">
-        <input type="text" id="isbn-search" placeholder="Enter ISBN">
-        <button type="submit">Search</button>
-    </form>
+        <!-- Tabs -->
+        <div class="tabs">
+            <button onclick="showTab('home')" class="active">Home</button>
+            <button onclick="showTab('add')">Add Book</button>
+            <button onclick="showTab('remove')">Remove Book</button>
+            <button onclick="showTab('borrow')">Borrow Book</button>
+            <button onclick="showTab('search')">Search Book</button>
+            <button onclick="showTab('return')">Return Book</button>
+        </div>
 
-    <!-- Search by Keyword Form -->
-    <h2>Search by Keyword</h2>
-    <form id="keyword-search-form">
-        <input type="text" id="keyword-search" placeholder="Enter keyword (Title, Author, or ISBN)">
-        <button type="submit">Search</button>
-    </form>
+        <!-- Home Tab -->
+        <div id="home" class="tab-content active">
+            <h2>Current Books</h2>
+            <form method="post" action="/">
+                <div class="button-container">
+                    <input type="submit" name="refresh" value="Refresh" class="refresh-btn">
+                </div>
+            </form>
+            <ul>
+                {% for isbn, book in library_inventory.items() %}
+                    <li class="book-item">
+                        <div>
+                            <span>Title:</span> {{ book.title }}<br>
+                            <span>Author:</span> {{ book.author }}<br>
+                            <span>ISBN:</span> {{ isbn }}<br>
+                            {% if isbn in borrowed_books %}
+                                <span style="color: red;">Borrowed</span>
+                            {% else %}
+                                <span style="color: green;">Available</span>
+                            {% endif %}
+                        </div>
+                        <form method="post" action="/">
+                            <input type="hidden" name="isbn" value="{{ isbn }}">
+                            <input type="submit" name="remove_book" value="Remove" class="remove-btn">
+                        </form>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
 
-    <!-- Book Inventory -->
-    <h2>Book Inventory</h2>
-    <ul id="book-list">
-        {% for book in books %}
-            <li data-isbn="{{ book.isbn }}" data-title="{{ book.title }}" data-author="{{ book.author }}">
-                {{ book.title }} by {{ book.author }} (ISBN: {{ book.isbn }}) - Status: {{ book.status }} 
-                <a href="/remove_book/{{ book.isbn }}">Remove</a> | 
-                {% if book.status == 'Available' %}
-                    <a href="/borrow_book/{{ book.isbn }}">Borrow</a>
-                {% else %}
-                    <a href="/return_book/{{ book.isbn }}">Return</a>
+        <!-- Add Book Tab -->
+        <div id="add" class="tab-content">
+            <h2>Add a New Book</h2>
+            <form method="post" action="/">
+                <label for="title">Title:</label>
+                <input type="text" id="title" name="title" required>
+                <label for="author">Author:</label>
+                <input type="text" id="author" name="author" required>
+                <label for="isbn">ISBN:</label>
+                <input type="text" id="isbn" name="isbn" required>
+                <input type="submit" name="add_book" value="Add Book" class="refresh-btn">
+            </form>
+        </div>
+
+        <!-- Remove Book Tab -->
+        <div id="remove" class="tab-content">
+            <h2>Remove a Book</h2>
+            <form method="post" action="/">
+                <label for="isbn">ISBN:</label>
+                <input type="text" id="isbn" name="isbn" required>
+                <input type="submit" name="remove_book" value="Remove Book" class="remove-btn">
+            </form>
+        </div>
+
+        <!-- Borrow Book Tab -->
+        <div id="borrow" class="tab-content">
+            <h2>Borrow a Book</h2>
+            <form method="post" action="/">
+                <label for="isbn">ISBN:</label>
+                <input type="text" id="isbn" name="isbn" required>
+                <input type="submit" name="borrow_book" value="Borrow Book" class="refresh-btn">
+            </form>
+        </div>
+
+        <!-- Search Book Tab -->
+        <div id="search" class="tab-content">
+            <h2>Search for a Book</h2>
+            <form method="post" action="/">
+                <label for="keyword">Search by ISBN or Keyword:</label>
+                <input type="text" id="keyword" name="keyword">
+                <input type="submit" name="search_book" value="Search" class="refresh-btn">
+            </form>
+            <div id="search-results" class="search-results">
+                {% if search_results %}
+                    <h3>Search Results:</h3>
+                    <ul>
+                        {% for isbn, book in search_results %}
+                            <li>
+                                <strong>Title:</strong> {{ book.title }}<br>
+                                <strong>Author:</strong> {{ book.author }}<br>
+                                <strong>ISBN:</strong> {{ isbn }}<br>
+                                {% if isbn in borrowed_books %}
+                                    <span style="color: red;">Borrowed</span>
+                                {% else %}
+                                    <span style="color: green;">Available</span>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
                 {% endif %}
-            </li>
-        {% endfor %}
-    </ul>
+            </div>
+        </div>
 
-    <!-- JavaScript for Filtering Books by ISBN -->
+        <!-- Return Book Tab -->
+        <div id="return" class="tab-content">
+            <h2>Return a Book</h2>
+            <form method="post" action="/">
+                <label for="isbn">ISBN:</label>
+                <input type="text" id="isbn" name="isbn" required>
+                <input type="submit" name="return_book" value="Return Book" class="refresh-btn">
+            </form>
+        </div>
+    </div>
+
     <script>
-        document.getElementById('isbn-search-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const isbn = document.getElementById('isbn-search').value.trim();
-            const books = document.querySelectorAll('#book-list li');
-
-            books.forEach(book => {
-                if (book.getAttribute('data-isbn') === isbn || isbn === '') {
-                    book.style.display = 'list-item';
-                } else {
-                    book.style.display = 'none';
-                }
+        function showTab(tabId) {
+            var tabs = document.querySelectorAll('.tab-content');
+            var buttons = document.querySelectorAll('.tabs button');
+            
+            tabs.forEach(function(tab) {
+                tab.classList.remove('active');
             });
-        });
-    </script>
-
-    <!-- JavaScript for Filtering Books by Keyword -->
-    <script>
-        document.getElementById('keyword-search-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const keyword = document.getElementById('keyword-search').value.trim().toLowerCase();
-            const books = document.querySelectorAll('#book-list li');
-
-            books.forEach(book => {
-                const title = book.getAttribute('data-title').toLowerCase();
-                const author = book.getAttribute('data-author').toLowerCase();
-                const isbn = book.getAttribute('data-isbn').toLowerCase();
-
-                if (title.includes(keyword) || author.includes(keyword) || isbn.includes(keyword)) {
-                    book.style.display = 'list-item';
-                } else {
-                    book.style.display = 'none';
-                }
+            buttons.forEach(function(button) {
+                button.classList.remove('active');
             });
-        });
+            
+            document.getElementById(tabId).classList.add('active');
+            document.querySelector('.tabs button[onclick="showTab(\'' + tabId + '\')"]').classList.add('active');
+        }
     </script>
 </body>
 </html>
