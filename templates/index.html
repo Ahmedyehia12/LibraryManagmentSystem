@@ -9,11 +9,11 @@
 <body>
     <header>
         <h1>Library Management System</h1>
-        <nav>
-            <ul>
-                <li><a href="/">Home</a></li>
-            </ul>
-        </nav>
+          <nav>
+              <ul>
+                  <li><a href="index.html">Home</a></li>
+              </ul>
+          </nav>
     </header>
     
     <main>
@@ -24,146 +24,66 @@
                     <tr>
                         <th>Title</th>
                         <th>Author</th>
+                        <th>Year</th>
+                        <th>Genre</th>
                         <th>ISBN</th>
                         <th>Status</th>
-                        <th>Actions</th>
+                        <th>Borrow/Return</th>
+                        <th>Remove</th> <!-- Add Action column for Delete button -->
                     </tr>
                 </thead>
-                <tbody id="books-table-body">
-                    <!-- Book entries will be populated here via JavaScript -->
+                <tbody>
+                    <!-- Book entries will go here -->
                 </tbody>
             </table>
         </section>
 
-        <section id="search-books">
-            <h2>Search Books</h2>
-            <form id="search-form">
-                <label for="search-query">Search by Title or Author:</label>
-                <input type="text" id="search-query" name="keyword" placeholder="Enter book title or author">
-                <button type="submit">Search</button>
-            </form>
-        </section>
+        
+      <section id="search-books">
+          <h2>Search Books</h2>
+          <form id="search-form">
+              <label for="search-query">Search by Title, Author, or Genre:</label>
+              <input type="text" id="search-query" name="search-query" placeholder="Enter book title, author, or genre">
+              <button type="submit">Search</button>
+          </form>
 
-        <section id="add-book">
-            <h2>Add New Book</h2>
-            <form id="book-form">
-                <label for="title">Title:</label>
-                <input type="text" id="title" name="title" required>
-                
-                <label for="author">Author:</label>
-                <input type="text" id="author" name="author" required>
-                
-                <label for="isbn">ISBN:</label>
-                <input type="text" id="isbn" name="isbn" required>
-                
-                <button type="submit">Add Book</button>
-            </form>
-        </section>
+          <h2>Search by ISBN</h2>
+          <form id="isbn-search-form">
+              <label for="isbn-query">Search by ISBN:</label>
+              <input type="text" id="isbn-query" name="isbn-query" placeholder="Enter book ISBN">
+              <button type="submit">Search</button>
+          </form>
+      </section>
+
+        
+      <section id="add-book">
+          <h2>Add New Book</h2>
+          <form id="book-form">
+              <label for="title">Title:</label>
+              <input type="text" id="title" name="title" required>
+              
+              <label for="author">Author:</label>
+              <input type="text" id="author" name="author" required>
+              
+              <label for="year">Year:</label>
+              <input type="number" id="year" name="year" required>
+              
+              <label for="genre">Genre:</label>
+              <input type="text" id="genre" name="genre" required>
+              
+              <label for="isbn">ISBN:</label>
+              <input type="text" id="isbn" name="isbn" required> <!-- New ISBN field -->
+              
+              <button type="submit">Add Book</button>
+          </form>
+</section>
+
     </main>
     
     <footer>
         <p>&copy; 2024 Library Management System</p>
     </footer>
     
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-    const searchForm = document.getElementById('search-form');
-    const bookForm = document.getElementById('book-form');
-    const booksTableBody = document.getElementById('books-table-body');
-
-    function fetchBooks(keyword = '') {
-        fetch(`/searchBooks?keyword=${keyword}`)
-            .then(response => response.json())
-            .then(data => {
-                booksTableBody.innerHTML = data.map(book => `
-                    <tr>
-                        <td>${book.title}</td>
-                        <td>${book.author}</td>
-                        <td>${book.isbn}</td>
-                        <td>${book.status}</td>
-                        <td>
-                            ${book.status === 'Available' 
-                                ? `<button onclick="borrowBook('${book.isbn}')">Borrow</button>` 
-                                : `<button onclick="returnBook('${book.isbn}')">Return</button>`}
-                            <button onclick="removeBook('${book.isbn}')">Remove</button>
-                        </td>
-                    </tr>
-                `).join('');
-            });
-    }
-
-    searchForm.addEventListener('submit', function(event) {
-        event.preventDefault();
-        const query = document.getElementById('search-query').value;
-        fetchBooks(query);
-    });
-
-    bookForm.addEventListener('submit', function(event) {
-        event.preventDefault();
-        const title = document.getElementById('title').value;
-        const author = document.getElementById('author').value;
-        const isbn = document.getElementById('isbn').value;
-
-        fetch('/add_book', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: new URLSearchParams({
-                title: title,
-                author: author,
-                isbn: isbn
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success') {
-                fetchBooks(); // Reload the books list
-                bookForm.reset(); // Reset the form fields
-            } else {
-                alert(data.message); // Show error message
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Failed to add book. Please try again.');
-        });
-    });
-
-    function removeBook(isbn) {
-        fetch(`/remove_book/${isbn}`, {
-            method: 'DELETE'
-        })
-        .then(response => response.json())
-        .then(() => {
-            fetchBooks();
-        });
-    }
-
-    function borrowBook(isbn) {
-        fetch(`/borrow_book/${isbn}`, {
-            method: 'POST'
-        })
-        .then(response => response.json())
-        .then(() => {
-            fetchBooks();
-        });
-    }
-
-    function returnBook(isbn) {
-        fetch(`/return_book/${isbn}`, {
-            method: 'POST'
-        })
-        .then(response => response.json())
-        .then(() => {
-            fetchBooks();
-        });
-    }
-
-    // Initial load
-    fetchBooks();
-});
-
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
