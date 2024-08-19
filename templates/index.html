@@ -54,7 +54,7 @@
             const books = document.querySelectorAll('#book-list li');
 
             books.forEach(book => {
-                if (book.getAttribute('data-isbn') === isbn) {
+                if (book.getAttribute('data-isbn') === isbn || isbn === '') {
                     book.style.display = 'list-item';
                 } else {
                     book.style.display = 'none';
