@@ -7,7 +7,7 @@
 </head>
 <body>
     <h1>Library Management System</h1>
-
+    
     <!-- Add Book Form -->
     <form action="/add_book" method="post">
         <input type="text" name="title" placeholder="Book Title" required>
@@ -16,17 +16,26 @@
         <button type="submit">Add Book</button>
     </form>
 
-    <!-- Search Book Form -->
-    <h2>Search Book</h2>
-    <form action="/searchBooks" method="post">
-        <input type="text" name="keyword" placeholder="ISBN" required>
+    <!-- Search by ISBN Form -->
+    <h2>Search by ISBN</h2>
+    <form id="isbn-search-form">
+        <input type="text" id="isbn-search" placeholder="Enter ISBN">
         <button type="submit">Search</button>
     </form>
+
+    <!-- Search by Keyword Form -->
+    <h2>Search by Keyword</h2>
+    <form id="keyword-search-form">
+        <input type="text" id="keyword-search" placeholder="Enter keyword (Title, Author, or ISBN)">
+        <button type="submit">Search</button>
+    </form>
+
     <!-- Book Inventory -->
     <h2>Book Inventory</h2>
-    <ul>
+    <ul id="book-list">
         {% for book in books %}
-            <li>{{ book.title }} by {{ book.author }} (ISBN: {{ book.isbn }}) - Status: {{ book.status }} 
+            <li data-isbn="{{ book.isbn }}" data-title="{{ book.title }}" data-author="{{ book.author }}">
+                {{ book.title }} by {{ book.author }} (ISBN: {{ book.isbn }}) - Status: {{ book.status }} 
                 <a href="/remove_book/{{ book.isbn }}">Remove</a> | 
                 {% if book.status == 'Available' %}
                     <a href="/borrow_book/{{ book.isbn }}">Borrow</a>
@@ -36,5 +45,43 @@
             </li>
         {% endfor %}
     </ul>
+
+    <!-- JavaScript for Filtering Books by ISBN -->
+    <script>
+        document.getElementById('isbn-search-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const isbn = document.getElementById('isbn-search').value.trim();
+            const books = document.querySelectorAll('#book-list li');
+
+            books.forEach(book => {
+                if (book.getAttribute('data-isbn') === isbn) {
+                    book.style.display = 'list-item';
+                } else {
+                    book.style.display = 'none';
+                }
+            });
+        });
+    </script>
+
+    <!-- JavaScript for Filtering Books by Keyword -->
+    <script>
+        document.getElementById('keyword-search-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const keyword = document.getElementById('keyword-search').value.trim().toLowerCase();
+            const books = document.querySelectorAll('#book-list li');
+
+            books.forEach(book => {
+                const title = book.getAttribute('data-title').toLowerCase();
+                const author = book.getAttribute('data-author').toLowerCase();
+                const isbn = book.getAttribute('data-isbn').toLowerCase();
+
+                if (title.includes(keyword) || author.includes(keyword) || isbn.includes(keyword)) {
+                    book.style.display = 'list-item';
+                } else {
+                    book.style.display = 'none';
+                }
+            });
+        });
+    </script>
 </body>
 </html>

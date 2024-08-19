@@ -75,6 +75,8 @@ def index():
 
 @app.route('/add_book', methods=['POST'])
 def add_book():
+    if getBook(request.form['isbn']):
+        return redirect(url_for('index'))
     title = request.form['title']
     author = request.form['author']
     isbn = request.form['isbn']
@@ -92,7 +94,7 @@ def search():
     books = getBooks(keyword)
     return jsonify(books)
 
-@app.route('search') # Request parameter : isbn
+@app.route('/search') # Request parameter : isbn
 def searchBook():
     isbn = request.form['isbn']
     book = getBook(isbn)
@@ -102,14 +104,14 @@ def searchBook():
 @app.route('/borrow_book/<isbn>') # Request parameter : isbn
 def borrow_book(isbn):
     if borrowBook(isbn):
-        return "Borrowed"
-    return "Not Available"
+        return redirect(url_for('index'))
+    return redirect(url_for('index'))
 
 @app.route('/return_book/<isbn>') # Request parameter : isbn
 def return_book(isbn):
     if returnBorrowedBook(isbn):
-        return "Returned"
-    return "Not Borrowed"
+        return redirect(url_for('index'))
+    return redirect(url_for('index'))
 
 if __name__ == '__main__':
     app.run(debug=True)
