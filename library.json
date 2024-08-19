@@ -1,9 +1,1 @@
-{
-    "books": [
-        {
-            "title": "Book1",
-            "author": "Ahmed Yehia",
-            "isbn": "1"
-        }
-    ]
-}
+{"books": [{"title": "Book3", "author": "Sama", "isbn": "3", "status": "Available"}, {"title": "Book4", "author": "Marwan", "isbn": "4", "status": "Available"}]}
