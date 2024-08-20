@@ -42,7 +42,7 @@ class library: # Where all common functions between users and admins are stored
     def getBooks(self,keyword):
         inventory = self.getInventory() # Get the inventory
         result = [] # Create an empty list to store the search results
-        for book in inventory:  # Iterate through the books in the inventory
+        for book in inventory['books']:  # Iterate through the books in the inventory
             if keyword.lower() in book['title'].lower() or keyword.lower() in book['author'].lower() or keyword == book['isbn']:
                 result.append(book) # If the keyword is found in the title, author or isbn, add the book to the result list
         return result
@@ -235,6 +235,8 @@ def signup():
             return redirect(url_for('login'))
         flash('Username already exists')
     return render_template('signup.html')
+
+
 
 @app.route('/add_admin', methods=['GET', 'POST'])
 def add_admin():
