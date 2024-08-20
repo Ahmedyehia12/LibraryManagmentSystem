@@ -51,10 +51,10 @@
             margin: 0.5em 0;
         }
 
-        input {
+        input, select {
             width: calc(100% - 2em);
-            padding: 0.5em;
-            margin-bottom: 1em;
+            padding: 1em;
+            margin-bottom: 0.75em;
             border: 1px solid #ddd;
             border-radius: 5px;
         }
@@ -84,7 +84,7 @@
 
         table th,
         table td {
-            padding: 0.75em;
+            padding: 1em;
             text-align: left;
             border-bottom: 1px solid #ddd;
         }
@@ -94,28 +94,21 @@
             color: #fff;
         }
 
-        table td button {
+        /* Styles for Action Buttons in Table */
+        table td button,
+        table td .remove-button {
             background-color: #333;
             color: #fff;
             border: none;
             padding: 0.25em 0.5em;
-            border-radius: 5px;
+            border-radius: 15px;
             cursor: pointer;
             font-size: 0.85em;
         }
 
-        table td button:hover {
+        table td button:hover,
+        table td .remove-button:hover {
             background-color: #555;
-        }
-
-        table td a {
-            color: #333;
-            text-decoration: none;
-            margin: 0 0.5em;
-        }
-
-        table td a:hover {
-            text-decoration: underline;
         }
 
         /* Footer Styles */
@@ -133,11 +126,30 @@
     </header>
     
     <main>
+        <!-- Logout Form -->
+        <form id="logout-form" action="/logout" method="post" style="text-align: right; margin-bottom: 1em;">
+            <button type="button" onclick="confirmLogout()">Logout</button>
+        </form>
+
         <!-- Add Book Form -->
         <form action="/add_book" method="post">
             <input type="text" name="title" placeholder="Book Title" required>
             <input type="text" name="author" placeholder="Author" required>
             <input type="text" name="isbn" placeholder="ISBN" required>
+            <select name="genre" required>
+                <option value="">Select Genre</option>
+                <option value="Fantasy">Fantasy</option>
+                <option value="Mystery">Mystery</option>
+                <option value="Horror">Horror</option>
+                <option value="Historical Fiction">Historical Fiction</option>
+                <option value="Romance">Romance</option>
+                <option value="Biography">Biography</option>
+                <option value="History">History</option>
+                <option value="True Crime">True Crime</option>
+                <option value="Science">Science</option>
+                <option value="Other">Other</option>
+            </select>
+            <input type="text" name="date_of_publish" required>
             <button type="submit">Add Book</button>
         </form>
 
@@ -168,40 +180,31 @@
                         <th>Book Title</th>
                         <th>Author</th>
                         <th>ISBN</th>
+                        <th>Genre</th>
+                        <th>Date of Publish</th>
                         <th>Status</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for book in books %}
-                        <tr data-isbn="{{ book.isbn }}" data-title="{{ book.title }}" data-author="{{ book.author }}">
+                        <tr data-isbn="{{ book.isbn }}" data-title="{{ book.title }}" data-author="{{ book.author }}" data-genre="{{ book.genre }}" data-date_of_publish="{{ book.date_of_publish }}">
                             <td>{{ book.title }}</td>
                             <td>{{ book.author }}</td>
                             <td>{{ book.isbn }}</td>
+                            <td>{{ book.genre }}</td>
+                            <td>{{ book.date_of_publish }}</td>
                             <td>{{ book.status }}</td>
                             <td>
-                                <a href="/remove_book/{{ book.isbn }}">Remove</a> | 
-                                {% if book.status == 'Available' %}
-                                    <button onclick="location.href='/borrow_book/{{ book.isbn }}'">Borrow</button>
-                                {% else %}
-                                    <button onclick="location.href='/return_book/{{ book.isbn }}'">Return</button>
-                                {% endif %}
+                                <form action="/remove_book/{{ book.isbn }}" method="post" style="display: inline;">
+                                    <button type="submit" class="remove-button">Remove</button>
+                                </form>
                             </td>
                         </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </section>
-        {% with messages = get_flashed_messages() %}
-    {% if messages %}
-        <ul>
-        {% for message in messages %}
-            <li>{{ message }}</li>
-        {% endfor %}
-        </ul>
-    {% endif %}
-{% endwith %}
-
     </main>
 
     <!-- JavaScript for Filtering Books by ISBN -->
@@ -232,8 +235,9 @@
                 const title = book.getAttribute('data-title').toLowerCase();
                 const author = book.getAttribute('data-author').toLowerCase();
                 const isbn = book.getAttribute('data-isbn').toLowerCase();
+                const genre = book.getAttribute('data-genre').toLowerCase();
 
-                if (title.includes(keyword) || author.includes(keyword) || isbn.includes(keyword)) {
+                if (title.includes(keyword) || author.includes(keyword) || isbn.includes(keyword) || genre.includes(keyword)) {
                     book.style.display = '';
                 } else {
                     book.style.display = 'none';
@@ -241,5 +245,15 @@
             });
         });
     </script>
+
+    <!-- JavaScript for Logout Confirmation -->
+    <script>
+        function confirmLogout() {
+            if (confirm('Are you sure you want to log out?')) {
+                document.getElementById('logout-form').submit();
+            }
+        }
+    </script>
+
 </body>
 </html>
