@@ -1,11 +1,12 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify
+from flask import Flask, render_template, request, redirect, url_for, jsonify, flash
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 import json
 import os
 
 app = Flask(__name__)
+app.secret_key = 'your_secret_key'  # Needed for session management
 
-
-
+# Inventory management functions
 def getInventory():
     try:
         with open('library.json', 'r') as file:  # Open the file in read mode
@@ -17,7 +18,7 @@ def getInventory():
 def saveInventory(Inventory):
     try:
         with open('library.json' , 'w') as file: # Open the file in write mode
-            json.dump(Inventory , file) # Write the data to the file
+            json.dump(Inventory ,    file) # Write the data to the file
     except FileNotFoundError: # If the file is not found
         return FileNotFoundError # Return the error
 
@@ -68,50 +69,114 @@ def returnBorrowedBook(isbn):
             return True # Return True
     return False
 
-@app.route('/') # Home route
+# Flask-Login setup
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+
+# Dummy user database
+users_db = {
+    "admin": {"password": "adminpass", "role": "admin"},
+    "user": {"password": "userpass", "role": "user"}
+}
+
+# User class
+class User(UserMixin):
+    def __init__(self, username, role):
+        self.id = username
+        self.role = role
+
+@login_manager.user_loader
+def load_user(username):
+    if username in users_db:
+        user = users_db[username]
+        return User(username, user['role'])
+    return None
+
+# Inventory management functions (unchanged)
+# ...
+
+# Authentication routes
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        if username in users_db and users_db[username]['password'] == password:
+            user = User(username, users_db[username]['role'])
+            login_user(user)
+            return redirect(url_for('index'))
+        flash('Invalid credentials')
+    return render_template('login.html')
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
+
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        role = request.form['role']
+        if username not in users_db:
+            users_db[username] = {"password": password, "role": role}
+            flash('Signup successful! You can now log in.')
+            return redirect(url_for('login'))
+        flash('Username already exists')
+    return render_template('signup.html')
+
+# Access control for book management
+@app.route('/add_book', methods=['POST'])
+@login_required
+def add_book():
+    if current_user.role != 'admin':
+        flash('Only admins can add books.')
+        return redirect(url_for('index'))
+    # Add book logic...
+    addBook(request.form['title'], request.form['author'], request.form['isbn'])
+    return redirect(url_for('index'))
+
+@app.route('/remove_book/<isbn>')
+@login_required
+def remove_book(isbn):
+    if current_user.role != 'admin':
+        flash('Only admins can remove books.')
+        return redirect(url_for('index'))
+    # Remove book logic...
+    removeBook(isbn)
+    return redirect(url_for('index'))
+
+
+# Access control for borrowing and returning books
+@app.route('/borrow_book/<isbn>')
+@login_required
+def borrow_book(isbn):
+    if current_user.role != 'user':
+        flash('Only users can borrow books.')
+        return redirect(url_for('index'))
+    # Borrow book logic...
+    borrowBook(isbn)
+    return redirect(url_for('index'))
+
+@app.route('/return_book/<isbn>')
+@login_required
+def return_book(isbn):
+    if current_user.role != 'user':
+        flash('Only users can return books.')
+        return redirect(url_for('index'))
+    # Return book logic...
+    returnBorrowedBook(isbn)
+    return redirect(url_for('index'))
+
+# Home route with access control
+@app.route('/')
+@login_required
 def index():
     books = getInventory()
-    return render_template('index.html', books=books['books']) # Render the index.html template with the books
-
-@app.route('/add_book', methods=['POST']) # Request method : POST
-def add_book(): # Function to add a book
-    if getBook(request.form['isbn']): # If the book already exists
-        return redirect(url_for('index')) # Redirect to the index page
-    title = request.form['title'] # Get the title from the form
-    author = request.form['author'] # Get the author from the form
-    isbn = request.form['isbn'] # Get the isbn from the form
-    addBook(title , author , isbn) # Add the book to the inventory
-    return redirect(url_for('index')) # Redirect to the index page
-
-@app.route('/remove_book/<isbn>') # Request parameter : isbn
-def remove_book(isbn): # Function to remove a book
-    removeBook(isbn) # Remove the book from the inventory
-    return redirect(url_for('index')) # Redirect to the index page  
-
-@app.route('/searchBooks') # Request parameter : keyword
-def search():
-    keyword = request.form['keyword'] # Get the keyword from the form
-    books = getBooks(keyword) # Get the books that match the keyword
-    return jsonify(books) # Return the books as a json response
-
-@app.route('/search') # Request parameter : isbn
-def searchBook():
-    isbn = request.form['isbn'] # Get the isbn from the form
-    book = getBook(isbn) # Get the book with the given isbn
-    return jsonify(book) # Return the book as a json response
-
-
-@app.route('/borrow_book/<isbn>') # Request parameter : isbn
-def borrow_book(isbn): # Function to borrow a book
-    if borrowBook(isbn): # If the book is borrowed successfully
-        return redirect(url_for('index')) # Redirect to the index page
-    return redirect(url_for('index')) # Redirect to the index page
-
-@app.route('/return_book/<isbn>') # Request parameter : isbn
-def return_book(isbn): # Function to return a borrowed book
-    if returnBorrowedBook(isbn): # If the book is returned successfully
-        return redirect(url_for('index')) # Redirect to the index page
-    return redirect(url_for('index')) 
+    return render_template('index.html', books=books['books'], user_role=current_user.role)
 
 if __name__ == '__main__':
     app.run(debug=True)
