@@ -3,257 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Library Management</title>
-    <style>
-        /* General Styles */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-
-        header {
-            background-color: #333;
-            color: #fff;
-            padding: 1em 0;
-            text-align: center;
-        }
-
-        main {
-            padding: 1em;
-        }
-
-        section {
-            margin-bottom: 2em;
-        }
-
-        h1 {
-            margin: 0 0 1em 0;
-        }
-
-        h2 {
-            border-bottom: 2px solid #333;
-            padding-bottom: 0.5em;
-        }
-
-        /* Form Styles */
-        form {
-            background-color: #fff;
-            padding: 1em;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 2em;
-        }
-
-        label {
-            display: block;
-            margin: 0.5em 0;
-        }
-
-        input, select {
-            width: calc(100% - 2em);
-            padding: 1em;
-            margin-bottom: 0.75em;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-
-        button {
-            background-color: #333;
-            color: #fff;
-            border: none;
-            padding: 0.5em 1em;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #555;
-        }
-
-        /* Table Styles */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background-color: #fff;
-            border-radius: 5px;
-            overflow: hidden;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        table th,
-        table td {
-            padding: 1em;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-
-        table th {
-            background-color: #333;
-            color: #fff;
-        }
-
-        /* Styles for Action Buttons in Table */
-        table td button,
-        table td .remove-button {
-            background-color: #333;
-            color: #fff;
-            border: none;
-            padding: 0.25em 0.5em;
-            border-radius: 15px;
-            cursor: pointer;
-            font-size: 0.85em;
-        }
-
-        table td button:hover,
-        table td .remove-button:hover {
-            background-color: #555;
-        }
-
-        /* Footer Styles */
-        footer {
-            text-align: center;
-            padding: 1em 0;
-            background-color: #333;
-            color: #fff;
-        }
-    </style>
+    <title>Library Management System</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <header>
         <h1>Library Management System</h1>
+          <nav>
+              <ul>
+                  <li><a href="index.html">Home</a></li>
+              </ul>
+          </nav>
     </header>
     
     <main>
-        <!-- Logout Form -->
-        <form id="logout-form" action="/logout" method="post" style="text-align: right; margin-bottom: 1em;">
-            <button type="button" onclick="confirmLogout()">Logout</button>
-        </form>
-
-        <!-- Add Book Form -->
-        <form action="/add_book" method="post">
-            <input type="text" name="title" placeholder="Book Title" required>
-            <input type="text" name="author" placeholder="Author" required>
-            <input type="text" name="isbn" placeholder="ISBN" required>
-            <select name="genre" required>
-                <option value="">Select Genre</option>
-                <option value="Fantasy">Fantasy</option>
-                <option value="Mystery">Mystery</option>
-                <option value="Horror">Horror</option>
-                <option value="Historical Fiction">Historical Fiction</option>
-                <option value="Romance">Romance</option>
-                <option value="Biography">Biography</option>
-                <option value="History">History</option>
-                <option value="True Crime">True Crime</option>
-                <option value="Science">Science</option>
-                <option value="Other">Other</option>
-            </select>
-            <input type="text" name="date_of_publish" required>
-            <button type="submit">Add Book</button>
-        </form>
-
-        <!-- Search by ISBN Form -->
-        <section>
-            <h2>Search by ISBN</h2>
-            <form id="isbn-search-form">
-                <input type="text" id="isbn-search" placeholder="Enter ISBN">
-                <button type="submit">Search</button>
-            </form>
-        </section>
-
-        <!-- Search by Keyword Form -->
-        <section>
-            <h2>Search by Keyword</h2>
-            <form id="keyword-search-form">
-                <input type="text" id="keyword-search" placeholder="Enter keyword (Title, Author, or ISBN)">
-                <button type="submit">Search</button>
-            </form>
-        </section>
-
-        <!-- Book Inventory -->
-        <section>
-            <h2>Book Inventory</h2>
-            <table id="book-list">
+        <section id="view-books">
+            <h2>Books in Library</h2>
+            <table>
                 <thead>
                     <tr>
-                        <th>Book Title</th>
+                        <th>Title</th>
                         <th>Author</th>
-                        <th>ISBN</th>
+                        <th>Year</th>
                         <th>Genre</th>
-                        <th>Date of Publish</th>
+                        <th>ISBN</th>
                         <th>Status</th>
-                        <th>Actions</th>
+                        <th>Borrow/Return</th>
+                        <th>Remove</th> <!-- Add Action column for Delete button -->
                     </tr>
                 </thead>
                 <tbody>
-                    {% for book in books %}
-                        <tr data-isbn="{{ book.isbn }}" data-title="{{ book.title }}" data-author="{{ book.author }}" data-genre="{{ book.genre }}" data-date_of_publish="{{ book.date_of_publish }}">
-                            <td>{{ book.title }}</td>
-                            <td>{{ book.author }}</td>
-                            <td>{{ book.isbn }}</td>
-                            <td>{{ book.genre }}</td>
-                            <td>{{ book.date_of_publish }}</td>
-                            <td>{{ book.status }}</td>
-                            <td>
-                                <form action="/remove_book/{{ book.isbn }}" method="post" style="display: inline;">
-                                    <button type="submit" class="remove-button">Remove</button>
-                                </form>
-                            </td>
-                        </tr>
-                    {% endfor %}
+                    <!-- Book entries will go here -->
                 </tbody>
             </table>
         </section>
+
+        
+      <section id="search-books">
+          <h2>Search Books</h2>
+          <form id="search-form">
+              <label for="search-query">Search by Title, Author, or Genre:</label>
+              <input type="text" id="search-query" name="search-query" placeholder="Enter book title, author, or genre">
+              <button type="submit">Search</button>
+          </form>
+
+          <h2>Search by ISBN</h2>
+          <form id="isbn-search-form">
+              <label for="isbn-query">Search by ISBN:</label>
+              <input type="text" id="isbn-query" name="isbn-query" placeholder="Enter book ISBN">
+              <button type="submit">Search</button>
+          </form>
+      </section>
+
+        
+      <section id="add-book">
+          <h2>Add New Book</h2>
+          <form id="book-form">
+              <label for="title">Title:</label>
+              <input type="text" id="title" name="title" required>
+              
+              <label for="author">Author:</label>
+              <input type="text" id="author" name="author" required>
+              
+              <label for="year">Year:</label>
+              <input type="number" id="year" name="year" required>
+              
+              <label for="genre">Genre:</label>
+              <input type="text" id="genre" name="genre" required>
+              
+              <label for="isbn">ISBN:</label>
+              <input type="text" id="isbn" name="isbn" required> <!-- New ISBN field -->
+              
+              <button type="submit">Add Book</button>
+          </form>
+</section>
+
     </main>
-
-    <!-- JavaScript for Filtering Books by ISBN -->
-    <script>
-        document.getElementById('isbn-search-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const isbn = document.getElementById('isbn-search').value.trim();
-            const books = document.querySelectorAll('#book-list tbody tr');
-
-            books.forEach(book => {
-                if (book.getAttribute('data-isbn') === isbn || isbn === '') {
-                    book.style.display = '';
-                } else {
-                    book.style.display = 'none';
-                }
-            });
-        });
-    </script>
-
-    <!-- JavaScript for Filtering Books by Keyword -->
-    <script>
-        document.getElementById('keyword-search-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const keyword = document.getElementById('keyword-search').value.trim().toLowerCase();
-            const books = document.querySelectorAll('#book-list tbody tr');
-
-            books.forEach(book => {
-                const title = book.getAttribute('data-title').toLowerCase();
-                const author = book.getAttribute('data-author').toLowerCase();
-                const isbn = book.getAttribute('data-isbn').toLowerCase();
-                const genre = book.getAttribute('data-genre').toLowerCase();
-
-                if (title.includes(keyword) || author.includes(keyword) || isbn.includes(keyword) || genre.includes(keyword)) {
-                    book.style.display = '';
-                } else {
-                    book.style.display = 'none';
-                }
-            });
-        });
-    </script>
-
-    <!-- JavaScript for Logout Confirmation -->
-    <script>
-        function confirmLogout() {
-            if (confirm('Are you sure you want to log out?')) {
-                document.getElementById('logout-form').submit();
-            }
-        }
-    </script>
-
+    
+    <footer>
+        <p>&copy; 2024 Library Management System</p>
+    </footer>
+    
+    <script src="script.js"></script>
 </body>
 </html>
