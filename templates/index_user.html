@@ -121,28 +121,36 @@
         <section>
             <h2>Book Inventory</h2>
             <table id="book-list">
-                <thead>
-                    <tr>
-                        <th>Book Title</th>
-                        <th>Author</th>
-                        <th>ISBN</th>
-                        <th>Genre</th>
-                        <th>Date of Publish</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for book in books %}
-                        <tr data-isbn="{{ book.isbn }}" data-title="{{ book.title }}" data-author="{{ book.author }}" data-genre="{{ book.genre }}" data-date_of_publish="{{ book.date_of_publish }}">
-                            <td>{{ book.title }}</td>
-                            <td>{{ book.author }}</td>
-                            <td>{{ book.isbn }}</td>
-                            <td>{{ book.genre }}</td>
-                            <td>{{ (book.date_of_publish) }}</td>
-                            <td>{{ book.status }}</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
+               <thead>
+                  <tr>
+                      <th>Book Title</th>
+                      <th>Author</th>
+                      <th>ISBN</th>
+                      <th>Genre</th>
+                      <th>Date of Publish</th>
+                      <th>Status</th>
+                      <th>Action</th> <!-- New Column for Actions -->
+                  </tr>
+              </thead>
+              <tbody>
+                  {% for book in books %}
+                      <tr data-isbn="{{ book.isbn }}" data-title="{{ book.title }}" data-author="{{ book.author }}" data-genre="{{ book.genre }}" data-date_of_publish="{{ book.date_of_publish }}" data-status="{{ book.status }}">
+                          <td>{{ book.title }}</td>
+                          <td>{{ book.author }}</td>
+                          <td>{{ book.isbn }}</td>
+                          <td>{{ book.genre }}</td>
+                          <td>{{ book.date_of_publish }}</td>
+                          <td>{{ book.status }}</td>
+                          <td>
+                              {% if book.status == 'Available' %}
+                                  <button class="action-btn" data-isbn="{{ book.isbn }}" data-status="{{ book.status }}">Borrow</button>
+                              {% else %}
+                                  <button class="action-btn" data-isbn="{{ book.isbn }}" data-status="{{ book.status }}">Return</button>
+                              {% endif %}
+                          </td>
+                      </tr>
+                  {% endfor %}
+              </tbody>
             </table>
         </section>
         <!-- Search by ISBN Form -->
@@ -202,5 +210,39 @@
             });
         });
     </script>
+    
+    <!-- Javascript for borrow button-->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const actionButtons = document.querySelectorAll('.action-btn');
+
+        actionButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const isbn = button.getAttribute('data-isbn');
+                const status = button.getAttribute('data-status');
+                const newStatus = status === 'Available' ? 'Borrowed' : 'Available';
+                const url = status === 'Available' ? `/borrow_book/${isbn}` : `/return_book/${isbn}`;
+
+                fetch(url, { method: 'POST' })
+                    .then(response => {
+                        if (response.ok) {
+                            // Update the button and book status on success
+                            button.textContent = newStatus === 'Available' ? 'Borrow' : 'Return';
+                            button.setAttribute('data-status', newStatus);
+                            const row = button.closest('tr');
+                            row.querySelector('td:nth-child(6)').textContent = newStatus;
+                        } else {
+                            alert('An error occurred while updating the book status.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            });
+        });
+    });
+</script>
+
+
 </body>
 </html>
