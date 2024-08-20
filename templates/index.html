@@ -121,9 +121,11 @@
     </style>
 </head>
 <body>
-    <header>
-        <h1>Library Management System</h1>
-    </header>
+  <header>
+      <h1>Library Management System</h1>
+  </header>
+
+
     
     <main>
         <!-- Logout Form -->
@@ -247,6 +249,14 @@
     </script>
 
     <!-- JavaScript for Logout Confirmation -->
+    <script>
+        function confirmLogout() {
+            if (confirm('Are you sure you want to log out?')) {
+                document.getElementById('logout-form').submit();
+            }
+        }
+    </script>
+
     <script>
         function confirmLogout() {
             if (confirm('Are you sure you want to log out?')) {
