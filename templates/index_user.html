@@ -18,6 +18,7 @@
             color: #fff;
             padding: 1em 0;
             text-align: center;
+            position: relative; /* Ensure the logout form is positioned correctly */
         }
 
         main {
@@ -53,8 +54,8 @@
 
         input, select {
             width: calc(100% - 2em);
-            padding: 1em;
-            margin-bottom: 0.75em;
+            padding: 0.5em;
+            margin-bottom: 1em;
             border: 1px solid #ddd;
             border-radius: 5px;
         }
@@ -95,8 +96,7 @@
         }
 
         /* Styles for Action Buttons in Table */
-        table td button,
-        table td .remove-button {
+        table td button {
             background-color: #333;
             color: #fff;
             border: none;
@@ -106,56 +106,71 @@
             font-size: 0.85em;
         }
 
-        table td button:hover,
-        table td .remove-button:hover {
+        table td button:hover {
             background-color: #555;
         }
 
-        /* Footer Styles */
-        footer {
-            text-align: center;
-            padding: 1em 0;
+        /* Logout Button Style */
+        .logout-button {
             background-color: #333;
             color: #fff;
+            border: none;
+            padding: 0.75em 1.5em;
+            border-radius: 15px;
+            cursor: pointer;
+        }
+
+        .logout-button:hover {
+            background-color: #555;
         }
     </style>
 </head>
 <body>
-  <header>
-      <h1>Library Management System</h1>
-  </header>
-
-
+    <header>
+        <h1>Library Management System</h1>
+    </header>
     
     <main>
         <!-- Logout Form -->
         <form id="logout-form" action="/logout" method="post" style="text-align: right; margin-bottom: 1em;">
             <button type="button" onclick="confirmLogout()">Logout</button>
         </form>
-
-        <!-- Add Book Form -->
-        <h2>Add Book</h2>
-        <form action="/add_book" method="post">
-            <input type="text" name="title" placeholder="Book Title" required>
-            <input type="text" name="author" placeholder="Author" required>
-            <input type="text" name="isbn" placeholder="ISBN" required>
-            <select name="genre" required>
-                <option value="">Select Genre</option>
-                <option value="Fantasy">Fantasy</option>
-                <option value="Mystery">Mystery</option>
-                <option value="Horror">Horror</option>
-                <option value="Historical Fiction">Historical Fiction</option>
-                <option value="Romance">Romance</option>
-                <option value="Biography">Biography</option>
-                <option value="History">History</option>
-                <option value="True Crime">True Crime</option>
-                <option value="Science">Science</option>
-                <option value="Other">Other</option>
-            </select>
-            <input type="text" name="date_of_publish" required>
-            <button type="submit">Add Book</button>
-        </form>
-
+        <!-- Book Inventory -->
+        <section>
+            <h2>Book Inventory</h2>
+            <table id="book-list">
+               <thead>
+                  <tr>
+                      <th>Book Title</th>
+                      <th>Author</th>
+                      <th>ISBN</th>
+                      <th>Genre</th>
+                      <th>Date of Publish</th>
+                      <th>Status</th>
+                      <th>Action</th> <!-- New Column for Actions -->
+                  </tr>
+              </thead>
+              <tbody>
+                  {% for book in books %}
+                      <tr data-isbn="{{ book.isbn }}" data-title="{{ book.title }}" data-author="{{ book.author }}" data-genre="{{ book.genre }}" data-date_of_publish="{{ book.date_of_publish }}" data-status="{{ book.status }}">
+                          <td>{{ book.title }}</td>
+                          <td>{{ book.author }}</td>
+                          <td>{{ book.isbn }}</td>
+                          <td>{{ book.genre }}</td>
+                          <td>{{ book.date_of_publish }}</td>
+                          <td>{{ book.status }}</td>
+                          <td>
+                              {% if book.status == 'Available' %}
+                                  <button class="action-btn" data-isbn="{{ book.isbn }}" data-status="{{ book.status }}">Borrow</button>
+                              {% else %}
+                                  <button class="action-btn" data-isbn="{{ book.isbn }}" data-status="{{ book.status }}">Return</button>
+                              {% endif %}
+                          </td>
+                      </tr>
+                  {% endfor %}
+              </tbody>
+            </table>
+        </section>
         <!-- Search by ISBN Form -->
         <section>
             <h2>Search by ISBN</h2>
@@ -173,47 +188,6 @@
                 <button type="submit">Search</button>
             </form>
         </section>
-
-        <!-- Book Inventory -->
-        <section>
-            <h2>Book Inventory</h2>
-            <table id="book-list">
-                <thead>
-                    <tr>
-                        <th>Book Title</th>
-                        <th>Author</th>
-                        <th>ISBN</th>
-                        <th>Genre</th>
-                        <th>Date of Publish</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for book in books %}
-                        <tr data-isbn="{{ book.isbn }}" data-title="{{ book.title }}" data-author="{{ book.author }}" data-genre="{{ book.genre }}" data-date_of_publish="{{ book.date_of_publish }}">
-                            <td>{{ book.title }}</td>
-                            <td>{{ book.author }}</td>
-                            <td>{{ book.isbn }}</td>
-                            <td>{{ book.genre }}</td>
-                            <td>{{ book.date_of_publish }}</td>
-                            <td>{{ book.status }}</td>
-                            <td>
-                                <form action="/remove_book/{{ book.isbn }}" method="post" style="display: inline;">
-                                    <button type="submit" class="remove-button">Remove</button>
-                                </form>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </section>
-        <h2>Add new Admin</h2>
-        <form id = "add_admin_form" action = "/add_admin" method = "POST">
-            <input type="text" name="username" placeholder="Username" required>
-            <input type="password" name="password" placeholder="Password" required>
-            <button type="submit">Add Admin</button>
-        </form>
     </main>
 
     <!-- JavaScript for Filtering Books by ISBN -->
@@ -254,6 +228,38 @@
             });
         });
     </script>
+    
+    <!-- Javascript for borrow button-->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const actionButtons = document.querySelectorAll('.action-btn');
+
+            actionButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const isbn = button.getAttribute('data-isbn');
+                    const status = button.getAttribute('data-status');
+                    const newStatus = status === 'Available' ? 'Borrowed' : 'Available';
+                    const url = status === 'Available' ? `/borrow_book/${isbn}` : `/return_book/${isbn}`;
+
+                    fetch(url, { method: 'POST' })
+                        .then(response => {
+                            if (response.ok) {
+                                // Update the button and book status on success
+                                button.textContent = newStatus === 'Available' ? 'Borrow' : 'Return';
+                                button.setAttribute('data-status', newStatus);
+                                const row = button.closest('tr');
+                                row.querySelector('td:nth-child(6)').textContent = newStatus;
+                            } else {
+                                alert('An error occurred while updating the book status.');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
+                });
+            });
+        });
+    </script>
 
     <!-- JavaScript for Logout Confirmation -->
     <script>
@@ -263,14 +269,5 @@
             }
         }
     </script>
-
-    <script>
-        function confirmLogout() {
-            if (confirm('Are you sure you want to log out?')) {
-                document.getElementById('logout-form').submit();
-            }
-        }
-    </script>
-
 </body>
 </html>
