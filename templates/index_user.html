@@ -18,6 +18,7 @@
             color: #fff;
             padding: 1em 0;
             text-align: center;
+            position: relative; /* Ensure the logout form is positioned correctly */
         }
 
         main {
@@ -108,6 +109,20 @@
         table td button:hover {
             background-color: #555;
         }
+
+        /* Logout Button Style */
+        .logout-button {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 0.75em 1.5em;
+            border-radius: 15px;
+            cursor: pointer;
+        }
+
+        .logout-button:hover {
+            background-color: #555;
+        }
     </style>
 </head>
 <body>
@@ -116,7 +131,10 @@
     </header>
     
     <main>
-    
+        <!-- Logout Form -->
+        <form id="logout-form" action="/logout" method="post" style="text-align: right; margin-bottom: 1em;">
+            <button type="button" onclick="confirmLogout()">Logout</button>
+        </form>
         <!-- Book Inventory -->
         <section>
             <h2>Book Inventory</h2>
@@ -212,37 +230,44 @@
     </script>
     
     <!-- Javascript for borrow button-->
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const actionButtons = document.querySelectorAll('.action-btn');
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const actionButtons = document.querySelectorAll('.action-btn');
 
-        actionButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const isbn = button.getAttribute('data-isbn');
-                const status = button.getAttribute('data-status');
-                const newStatus = status === 'Available' ? 'Borrowed' : 'Available';
-                const url = status === 'Available' ? `/borrow_book/${isbn}` : `/return_book/${isbn}`;
+            actionButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const isbn = button.getAttribute('data-isbn');
+                    const status = button.getAttribute('data-status');
+                    const newStatus = status === 'Available' ? 'Borrowed' : 'Available';
+                    const url = status === 'Available' ? `/borrow_book/${isbn}` : `/return_book/${isbn}`;
 
-                fetch(url, { method: 'POST' })
-                    .then(response => {
-                        if (response.ok) {
-                            // Update the button and book status on success
-                            button.textContent = newStatus === 'Available' ? 'Borrow' : 'Return';
-                            button.setAttribute('data-status', newStatus);
-                            const row = button.closest('tr');
-                            row.querySelector('td:nth-child(6)').textContent = newStatus;
-                        } else {
-                            alert('An error occurred while updating the book status.');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                    });
+                    fetch(url, { method: 'POST' })
+                        .then(response => {
+                            if (response.ok) {
+                                // Update the button and book status on success
+                                button.textContent = newStatus === 'Available' ? 'Borrow' : 'Return';
+                                button.setAttribute('data-status', newStatus);
+                                const row = button.closest('tr');
+                                row.querySelector('td:nth-child(6)').textContent = newStatus;
+                            } else {
+                                alert('An error occurred while updating the book status.');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
+                });
             });
         });
-    });
-</script>
+    </script>
 
-
+    <!-- JavaScript for Logout Confirmation -->
+    <script>
+        function confirmLogout() {
+            if (confirm('Are you sure you want to log out?')) {
+                document.getElementById('logout-form').submit();
+            }
+        }
+    </script>
 </body>
 </html>
