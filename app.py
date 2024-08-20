@@ -150,7 +150,7 @@ class User(UserMixin, library): # Normal User Privileges
 def index():
     books = library().getInventory()
     return render_template('index.html', books=books['books']) # Render the index.html template with the books
-
+# Home route
 
 
 @app.route('/home')
