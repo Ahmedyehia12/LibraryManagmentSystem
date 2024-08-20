@@ -167,17 +167,19 @@ def remove_book(isbn): # Function to remove a book
     Admin_User(None).removeBook(isbn) # Remove the book from the inventory
     return redirect(url_for('index')) # Redirect to the index page
 
-@app.route('/borrow_book/<isbn>') # Request parameter : isbn
+@app.route('/borrow_book/<isbn>', methods=["POST"]) # Request parameter : isbn
 def borrow_book(isbn): # Function to borrow a book
     if User(None).borrowBook(isbn): # If the book is borrowed successfully
         return redirect(url_for('index_user')) # Redirect to the index page
+    flash("An Unexpected Error Occured D:")
     return redirect(url_for('index_user')) # Redirect to the index page
 
-@app.route('/return_book/<isbn>') # Request parameter : isbn
+@app.route('/return_book/<isbn>', methods=["POST"]) # Request parameter : isbn
 def return_book(isbn): # Function to return a borrowed book
     if User.returnBorrowedBook(isbn): # If the book is returned successfully
         return redirect(url_for('index_user')) # Redirect to the index page
     flash("An Unexpected Error Occured D:")
+    return redirect(url_for('index_user')) # Redirect to the index page
 
 users_db = library().getUsers()
 
