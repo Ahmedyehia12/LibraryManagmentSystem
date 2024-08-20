@@ -116,24 +116,7 @@
     </header>
     
     <main>
-        <!-- Search by ISBN Form -->
-        <section>
-            <h2>Search by ISBN</h2>
-            <form id="isbn-search-form">
-                <input type="text" id="isbn-search" placeholder="Enter ISBN">
-                <button type="submit">Search</button>
-            </form>
-        </section>
-
-        <!-- Search by Keyword Form -->
-        <section>
-            <h2>Search by Keyword</h2>
-            <form id="keyword-search-form">
-                <input type="text" id="keyword-search" placeholder="Enter keyword (Title, Author, or ISBN)">
-                <button type="submit">Search</button>
-            </form>
-        </section>
-
+    
         <!-- Book Inventory -->
         <section>
             <h2>Book Inventory</h2>
@@ -161,6 +144,23 @@
                     {% endfor %}
                 </tbody>
             </table>
+        </section>
+        <!-- Search by ISBN Form -->
+        <section>
+            <h2>Search by ISBN</h2>
+            <form id="isbn-search-form">
+                <input type="text" id="isbn-search" placeholder="Enter ISBN">
+                <button type="submit">Search</button>
+            </form>
+        </section>
+
+        <!-- Search by Keyword Form -->
+        <section>
+            <h2>Search by Keyword</h2>
+            <form id="keyword-search-form">
+                <input type="text" id="keyword-search" placeholder="Enter keyword (Title, Author, or ISBN)">
+                <button type="submit">Search</button>
+            </form>
         </section>
     </main>
 
@@ -204,4 +204,3 @@
     </script>
 </body>
 </html>
-
