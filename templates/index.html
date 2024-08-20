@@ -134,6 +134,7 @@
         </form>
 
         <!-- Add Book Form -->
+        <h2>Add Book</h2>
         <form action="/add_book" method="post">
             <input type="text" name="title" placeholder="Book Title" required>
             <input type="text" name="author" placeholder="Author" required>
@@ -207,6 +208,12 @@
                 </tbody>
             </table>
         </section>
+        <h2>Add new Admin</h2>
+        <form id = "add_admin_form" action = "/add_admin" method = "POST">
+            <input type="text" name="username" placeholder="Username" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <button type="submit">Add Admin</button>
+        </form>
     </main>
 
     <!-- JavaScript for Filtering Books by ISBN -->

@@ -101,6 +101,12 @@ class Admin_User(UserMixin, library): # Admin Privileges
         inventory = library().getInventory() # Get the inventory
         inventory['books'] = [book for book in inventory['books'] if book['isbn'] != isbn] # Remove the book with the given isbn
         self.saveInventory(inventory) # Save the inventory  
+
+    @login_required
+    def addAnotherAdmin(self, username, password): # Function to add another admin
+        users = library().getUsers() # Get the users
+        users[username] = {"password": password, "role": "Admin"} # Add the new admin to the users
+        library().saveUser(users) # Save the users
     
         
 
@@ -225,6 +231,15 @@ def signup():
             return redirect(url_for('login'))
         flash('Username already exists')
     return render_template('signup.html')
+
+@app.route('/add_admin', methods=['GET', 'POST'])
+def add_admin():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        Admin_User(None).addAnotherAdmin(username, password)
+        return redirect(url_for('index'))
+    return render_template('add_admin.html')
 
 
 
