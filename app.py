@@ -79,6 +79,8 @@ class Admin_User(UserMixin, library): # Admin Privileges
     @login_required
     def addBook(self, title , author , isbn, genre, date): # Function to add a book to the inventory
         inventory = library().getInventory() # Get the inventory
+        if library().getBook(isbn): # If the book already exists
+            return False # Return False
         inventory['books'].append({ # Append the new book to the inventory
             "title" : title, # Title of the book
             "author" : author,
@@ -88,6 +90,7 @@ class Admin_User(UserMixin, library): # Admin Privileges
             "status" : "Available"
         })
         self.saveInventory(inventory) # Save the inventory
+        return True # Return True
     
     def saveInventory(self, Inventory):
         try:
@@ -158,7 +161,8 @@ def index_user():
 
 @app.route('/add_book', methods=['POST']) # Request method : POST
 def add_book(): # Function to add a book
-    if Admin_User(None).getBook(request.form['isbn']): # If the book already exists
+    if library().getBook(request.form['isbn']): # If the book already exists
+        flash("Book already exists!")
         return redirect(url_for('index')) # Redirect to the index page
     title = request.form['title'] # Get the title from the form
     author = request.form['author'] # Get the author from the form
