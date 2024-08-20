@@ -47,6 +47,15 @@ class library: # Where all common functions between users and admins are stored
             if keyword.lower() in book['title'].lower() or keyword.lower() in book['author'].lower() or keyword == book['isbn']:
                 result.append(book) # If the keyword is found in the title, author or isbn, add the book to the result list
         return result
+    def generateISBN(self):
+        inventory = self.getInventory()
+        isbn = 0
+        for book in inventory['books']:
+            current_isbn = book['isbn']
+            #convert to integer
+            current_isbn = int(current_isbn)
+            isbn = max(isbn, current_isbn)
+        return isbn + 1
 
     def getBook(self,isbn):
         inventory = self.getInventory() # Get the inventory
@@ -78,8 +87,9 @@ class Admin_User(UserMixin, library): # Admin Privileges
         self.id = username
 
     @login_required
-    def addBook(self, title , author , isbn, genre, date): # Function to add a book to the inventory
+    def addBook(self, title , author, genre, date): # Function to add a book to the inventory
         inventory = library().getInventory() # Get the inventory
+        isbn = library().generateISBN() # Generate a new isbn
         if library().getBook(isbn): # If the book already exists
             return False # Return False
         inventory['books'].append({ # Append the new book to the inventory
@@ -162,15 +172,11 @@ def index_user():
 
 @app.route('/add_book', methods=['POST']) # Request method : POST
 def add_book(): # Function to add a book
-    if library().getBook(request.form['isbn']): # If the book already exists
-        flash("Book already exists!")
-        return redirect(url_for('index')) # Redirect to the index page
     title = request.form['title'] # Get the title from the form
     author = request.form['author'] # Get the author from the form
-    isbn = request.form['isbn'] # Get the isbn from the form
     genre = request.form['genre'] # Get the genre of the book
     date = request.form['date_of_publish'] # get the date of publish
-    Admin_User(None).addBook(title , author , isbn, genre, date) # Add the book to the inventory
+    Admin_User(None).addBook(title , author , genre, date) # Add the book to the inventory
     return redirect(url_for('index')) # Redirect to the index page
 
 @app.route('/remove_book/<isbn>', methods=["GET", "POST"]) # Request parameter : isbn
