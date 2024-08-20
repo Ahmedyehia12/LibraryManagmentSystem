@@ -133,6 +133,10 @@
     </header>
     
     <main>
+           <!-- Logout Form -->
+           <form id="logout-form" action="/logout" method="GET" style="text-align: right; margin-bottom: 1em;">
+            <button type="button" onclick="confirmLogout()">Logout</button>
+        </form>
         <!-- Add Book Form -->
         <form action="/add_book" method="post">
             <input type="text" name="title" placeholder="Book Title" required>
@@ -201,10 +205,6 @@
         </ul>
     {% endif %}
 {% endwith %}
-        <!-- Logout Form -->
-        <form action="/logout" method="post">
-            <button type="submit">Logout</button>
-        </form>
 
     </main>
 
@@ -245,5 +245,12 @@
             });
         });
     </script>
+        <script>
+            function confirmLogout() {
+                if (confirm('Are you sure you want to log out?')) {
+                    document.getElementById('logout-form').submit();
+                }
+            }
+        </script>
 </body>
 </html>
