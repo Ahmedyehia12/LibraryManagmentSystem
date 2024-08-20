@@ -69,16 +69,20 @@ def returnBorrowedBook(isbn):
             return True # Return True
     return False
 
+
+def load_users_db():
+    with open('users_db.json', 'r') as f:
+        return json.load(f)
+    
+def save_users_db(users_db):
+    with open('users_db.json', 'w') as f:
+        json.dump(users_db, f)
+
+
 # Flask-Login setup
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
-
-# Dummy user database
-users_db = {
-    "admin": {"password": "adminpass", "role": "admin"},
-    "user": {"password": "userpass", "role": "user"}
-}
 
 # User class
 class User(UserMixin):
@@ -88,6 +92,7 @@ class User(UserMixin):
 
 @login_manager.user_loader
 def load_user(username):
+    users_db = load_users_db()
     if username in users_db:
         user = users_db[username]
         return User(username, user['role'])
@@ -99,12 +104,13 @@ def load_user(username):
 # Authentication routes
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    users_db = load_users_db()
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
         if username in users_db and users_db[username]['password'] == password:
             user = User(username, users_db[username]['role'])
-            login_user(user)
+            login_user(user) # this will log the user in, you can access the logged in user with current_user this is a flask_login function
             return redirect(url_for('index'))
         flash('Invalid credentials')
     return render_template('login.html')
@@ -117,12 +123,14 @@ def logout():
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
+    users_db = load_users_db()
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
         role = request.form['role']
         if username not in users_db:
             users_db[username] = {"password": password, "role": role}
+            save_users_db(users_db)
             flash('Signup successful! You can now log in.')
             return redirect(url_for('login'))
         flash('Username already exists')
