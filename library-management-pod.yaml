@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: library-management-pod
+spec:
+  containers:
+  - name: library-management-container
+    image: ahmedyehia32/library-management-system
+    ports:
+    - containerPort: 5000
