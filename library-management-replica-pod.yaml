@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: library-management-rc
+  labels:
+    app: library-management
+spec:
+  replicas: 3  # Number of pod replicas you want
+  selector:
+    app: library-management
+  template:
+    metadata:
+      labels:
+        app: library-management
+    spec:
+      containers:
+      - name: library-management-container
+        image: ahmedyehia32/library-management-system
+        ports:
+        - containerPort: 5000

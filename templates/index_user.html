@@ -131,6 +131,24 @@
     </header>
     
     <main>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul id="flash-messages">
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+            <script>
+                // JavaScript to hide the flash messages after 4 seconds
+                setTimeout(function() {
+                    var flashMessages = document.getElementById('flash-messages');
+                    if (flashMessages) {
+                        flashMessages.style.display = 'none';
+                    }
+                }, 4000); // 4000 milliseconds = 4 seconds
+            </script>
+        {% endif %}
+    {% endwith %}
         
         <!-- Logout Form -->
         <form id="logout-form" action="/logout" method="post" style="text-align: right; margin-bottom: 1em;">

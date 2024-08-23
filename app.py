@@ -11,13 +11,16 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
+library_url = 'data/library.json'
+users_url = 'data/users.json'
+
 class library: # Where all common functions between users and admins are stored
     def __init__(self):
         pass
     
     def getInventory(self):
         try:
-            with open('library.json', 'r') as file:  # Open the file in read mode
+            with open(library_url, 'r') as file:  # Open the file in read mode
                 data = json.load(file) # Load the json data from the file
                 return data # Return the data
         except FileNotFoundError: # If the file is not found
@@ -25,7 +28,7 @@ class library: # Where all common functions between users and admins are stored
     
     def getUsers(self):
         try:
-            with open('users.json', 'r') as file:  # Open the file in read mode
+            with open(users_url, 'r') as file:  # Open the file in read mode
                 data = json.load(file) # Load the json data from the file
                 return data # Return the data
         except FileNotFoundError: # If the file is not found
@@ -34,7 +37,7 @@ class library: # Where all common functions between users and admins are stored
 
     def saveUser(self, User):
         try:
-            with open('users.json', 'w') as file: # Open the file in write mode
+            with open(users_url, 'w') as file: # Open the file in write mode
                 json.dump(User, file) # Write the data to the file
         except FileNotFoundError: # If the file is not found
             return FileNotFoundError # Return the error
@@ -105,7 +108,7 @@ class Admin_User(UserMixin, library): # Admin Privileges
     
     def saveInventory(self, Inventory):
         try:
-            with open('library.json' , 'w') as file: # Open the file in write mode
+            with open(library_url , 'w') as file: # Open the file in write mode
                 json.dump(Inventory ,    file) # Write the data to the file
         except FileNotFoundError: # If the file is not found
             return FileNotFoundError # Return the error
@@ -130,6 +133,7 @@ class User(UserMixin, library): # Normal User Privileges
 
     @login_manager.user_loader
     def load_user(username):
+        users_db = library().getUsers()
         if username in users_db.keys():
             user = users_db[username]
             return User(user)
@@ -159,6 +163,9 @@ class User(UserMixin, library): # Normal User Privileges
 @app.route('/admin_home') # Home route
 @login_required
 def index():
+    if current_user.id['role'] == 'User':
+        flash('You do not have permission to access the admin page')
+        return redirect(url_for('index_user'))
     books = library().getInventory()
     return render_template('index.html', books=books['books']) # Render the index.html template with the books
 # Home route
@@ -167,11 +174,17 @@ def index():
 @app.route('/home')
 @login_required
 def index_user():
+    if current_user.id['role'] == 'Admin':
+        flash('You do not have permission to access the user page')
+        return redirect(url_for('index'))
     books = library().getInventory()
     return render_template('index_user.html', books=books['books']) # Render the index.html template with the books
 
 @app.route('/add_book', methods=['POST']) # Request method : POST
 def add_book(): # Function to add a book
+    if current_user.id['role'] == 'User':
+        flash('You do not have permission to add a book')
+        return redirect(url_for('index_user'))
     title = request.form['title'] # Get the title from the form
     author = request.form['author'] # Get the author from the form
     genre = request.form['genre'] # Get the genre of the book
@@ -181,11 +194,17 @@ def add_book(): # Function to add a book
 
 @app.route('/remove_book/<isbn>', methods=["GET", "POST"]) # Request parameter : isbn
 def remove_book(isbn): # Function to remove a book
+    if current_user.id['role'] == 'User':
+        flash('You do not have permission to remove a book')
+        return redirect(url_for('index_user'))
     Admin_User(None).removeBook(isbn) # Remove the book from the inventory
     return redirect(url_for('index')) # Redirect to the index page
 
 @app.route('/borrow_book/<isbn>', methods=["POST"]) # Request parameter : isbn
 def borrow_book(isbn): # Function to borrow a book
+    if current_user.id['role'] == 'Admin':
+        flash('You do not have permission to borrow a book')
+        return redirect(url_for('index'))
     if User(None).borrowBook(isbn): # If the book is borrowed successfully
         return redirect(url_for('index_user')) # Redirect to the index page
     flash("An Unexpected Error Occured D:")
@@ -193,19 +212,21 @@ def borrow_book(isbn): # Function to borrow a book
 
 @app.route('/return_book/<isbn>', methods=["POST"]) # Request parameter : isbn
 def return_book(isbn): # Function to return a borrowed book
+    if current_user.id['role'] == 'Admin':
+        flash('You do not have permission to return a book')
+        return redirect(url_for('index'))
     if User.returnBorrowedBook(isbn): # If the book is returned successfully
         return redirect(url_for('index_user')) # Redirect to the index page
     flash("An Unexpected Error Occured D:")
     return redirect(url_for('index_user')) # Redirect to the index page
 
-users_db = library().getUsers()
 
 @app.route('/', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        
+        users_db = library().getUsers()
         if username in users_db and users_db[username]['password'] == password:
             role = users_db[username]['role']
             if role == "Admin":
@@ -235,6 +256,7 @@ def signup():
         password = request.form['password']
 
         # newest_user_id = users_db[list(users_db.keys())[-1]]
+        users_db = library().getUsers()
         if username not in users_db.keys():
             users_db[username] = {"password": password, "role": "User", "id":200}
             library().saveUser(users_db)
@@ -247,6 +269,10 @@ def signup():
 
 @app.route('/add_admin', methods=['GET', 'POST'])
 def add_admin():
+    if current_user.id['role'] == 'User':
+        flash('You do not have permission to add an admin')
+        return redirect(url_for('index_user'))
+    
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']

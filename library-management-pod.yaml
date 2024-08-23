@@ -5,6 +5,6 @@ metadata:
 spec:
   containers:
   - name: library-management-container
-    image: ahmedyehia32/library-management-system
+    image: ahmedyehia32/new-library-system
     ports:
     - containerPort: 5000

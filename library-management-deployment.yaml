@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: library-management-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: library-management
+  template:
+    metadata:
+      labels:
+        app: library-management
+    spec:
+      containers:
+        - name: library-management-container
+          image: ahmedyehia32/library-management-system
+          ports:
+            - containerPort: 5000
+          volumeMounts:
+            - name: library-storage
+              mountPath: /app # Mounting to the path inside the container
+      volumes:
+        - name: library-storage
+          persistentVolumeClaim:
+            claimName: library-pvc
+
+
+
