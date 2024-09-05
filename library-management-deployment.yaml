@@ -17,10 +17,3 @@ spec:
           image: ahmedyehia32/library-system-final
           ports:
             - containerPort: 5000
-          volumeMounts:
-            - name: ebs-storage
-              mountPath: /data  # Path within the container where the PVC is mounted
-      volumes:
-        - name: ebs-storage
-          persistentVolumeClaim:
-            claimName: my-ebs-pvc
