@@ -13,8 +13,8 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
-library_url = 'data/library.json'
-users_url = 'data/users.json'
+library_url = '../data/library.json'
+users_url = '../data/users.json'
 
 class library: # Where all common functions between users and admins are stored
     def __init__(self):
