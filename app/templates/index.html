@@ -4,14 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Library Management</title>
+    <!-- Link to CSS file if you have one -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-  <header>
-      <h1>Library Management System</h1>
-  </header>
-
-
-    
+    <header>
+        <h1>Library Management System</h1>
+    </header>
     <main>
         {% with messages = get_flashed_messages() %}
         {% if messages %}
@@ -30,8 +29,8 @@
                 }, 4000); // 4000 milliseconds = 4 seconds
             </script>
         {% endif %}
-    {% endwith %}
-    
+        {% endwith %}
+        
         <!-- Logout Form -->
         <form id="logout-form" action="/logout" method="post" style="text-align: right; margin-bottom: 1em;">
             <button type="button" onclick="confirmLogout()">Logout</button>
@@ -111,60 +110,16 @@
                 </tbody>
             </table>
         </section>
+
         <h2>Add new Admin</h2>
-        <form id = "add_admin_form" action = "/add_admin" method = "POST">
+        <form id="add_admin_form" action="/add_admin" method="POST">
             <input type="text" name="username" placeholder="Username" required>
             <input type="password" name="password" placeholder="Password" required>
             <button type="submit">Add Admin</button>
         </form>
     </main>
 
-    <!-- JavaScript for Filtering Books by ISBN -->
-    <script>
-        document.getElementById('isbn-search-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const isbn = document.getElementById('isbn-search').value.trim();
-            const books = document.querySelectorAll('#book-list tbody tr');
-
-            books.forEach(book => {
-                if (book.getAttribute('data-isbn') === isbn || isbn === '') {
-                    book.style.display = '';
-                } else {
-                    book.style.display = 'none';
-                }
-            });
-        });
-    </script>
-
-    <!-- JavaScript for Filtering Books by Keyword -->
-    <script>
-        document.getElementById('keyword-search-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const keyword = document.getElementById('keyword-search').value.trim().toLowerCase();
-            const books = document.querySelectorAll('#book-list tbody tr');
-
-            books.forEach(book => {
-                const title = book.getAttribute('data-title').toLowerCase();
-                const author = book.getAttribute('data-author').toLowerCase();
-                const isbn = book.getAttribute('data-isbn').toLowerCase();
-                const genre = book.getAttribute('data-genre').toLowerCase();
-
-                if (title.includes(keyword) || author.includes(keyword) || isbn.includes(keyword) || genre.includes(keyword)) {
-                    book.style.display = '';
-                } else {
-                    book.style.display = 'none';
-                }
-            });
-        });
-    </script>
-
-    <!-- JavaScript for Logout Confirmation -->
-    <script>
-        function confirmLogout() {
-            if (confirm('Are you sure you want to log out?')) {
-                document.getElementById('logout-form').submit();
-            }
-        }
-    </script>
+    <!-- Link to external JavaScript file -->
+    <script src="{{ url_for('static', filename='js/library-management.js') }}"></script>
 </body>
 </html>
