@@ -18,3 +18,6 @@ EXPOSE 5000
 
 # 7. Run the application
 CMD ["python", "app.py"]
+
+
+#hi there
