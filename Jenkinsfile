@@ -1,26 +1,24 @@
 pipeline {
-    agent {
-        // This uses any available agent with the label 'eks', which should match your EKS nodes
-        label 'eks'
-    }
-    
+    agent any  // Use any available Jenkins agent
+
     environment {
-        // Replace 'aws-credentials-id' with the ID of the AWS credentials stored in Jenkins
-        AWS_CREDENTIALS = credentials('aws-credentials-id')
-        // Ensure AWS_REGION is set to your specific region
-        AWS_REGION = 'us-west-2' // Modify to your AWS region
+        AWS_CREDENTIALS = credentials('aws-credentials-id')  // Jenkins credential ID for AWS
+        AWS_REGION = 'eu-central-1'  // Set to your AWS region
     }
     
+    triggers {
+        pollSCM('* * * * *')  // Poll the SCM for changes every minute
+    }
+
     stages {
         stage('Checkout') {
             steps {
-                // Checkout your Terraform directory from the specified branch
                 checkout([
                     $class: 'GitSCM', 
-                    branches: [[name: '*/maran']],
+                    branches: [[name: '*/maran']],  // Adjust branch name as needed
                     userRemoteConfigs: [[
                         url: 'https://github.com/Ahmedyehia12/LibraryManagmentSystem.git',
-                        credentialsId: 'your-jenkins-github-credentials-id'
+                        credentialsId: 'MarwanMohammed2500/******'  // Jenkins credential ID for GitHub
                     ]]
                 ])
             }
@@ -28,29 +26,18 @@ pipeline {
 
         stage('Terraform Init') {
             steps {
-                dir('Terraform') { // Navigate to your Terraform directory
-                    sh 'terraform init'
+                dir('terraform') {  // Navigate to the Terraform directory
+                    sh 'terraform init'  // Initialize Terraform
                 }
             }
         }
 
         stage('Terraform Apply') {
             steps {
-                dir('Terraform') {
-                    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-credentials-id']]) {
-                        // Run terraform apply with auto-approve
-                        sh 'terraform apply -auto-approve'
+                dir('terraform') {
+                    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-creds-id']]) {
+                        sh 'terraform apply -auto-approve'  // Apply Terraform configuration
                     }
-                }
-            }
-        }
-        
-        stage('Schedule Destroy') {
-            steps {
-                script {
-                    // Schedule a job to run 'terraform destroy' after 24 hours
-                    // You can use Jenkins Job DSL, pipeline steps like 'build' with cron, or any scheduling method available in Jenkins
-                    currentBuild.rawBuild.getExecutor().interrupt() // Placeholder: customize as per your scheduling method
                 }
             }
         }
@@ -58,9 +45,7 @@ pipeline {
     
     post {
         always {
-            node('eks') {  // Use the appropriate label or 'any' if EKS nodes are available to Jenkins
-                cleanWs() // Clean workspace after build
-            }
+            cleanWs()  // Clean workspace after build
         }
     }
 }
