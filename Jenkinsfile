@@ -43,8 +43,8 @@ pipeline {
     }
     post {
         always {
-            // Ensure cleanWs is inside a node block to provide necessary context
-            node {
+            // Specify a label for the node block if required
+            node('master') {  // Replace 'master' with a specific label if needed, or 'any' to use any agent
                 cleanWs() // Clean workspace after build
             }
         }
