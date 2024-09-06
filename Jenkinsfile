@@ -18,7 +18,7 @@ pipeline {
             }
         }
 
-        stage('Terraform Init') {
+        stage('Terraform Init - Backend') {
             steps {
                 dir('Terraform/backend-init') {  // Navigate to the Terraform directory
                     sh 'terraform init'  // Initialize Terraform
@@ -26,16 +26,15 @@ pipeline {
             }
         }
 
-        stage('Terraform Apply') {
+        stage('Terraform Apply - Backend') {
             steps {
                 dir('Terraform/backend-init') {
                     sh 'terraform apply -auto-approve'  // Apply Terraform configuration
                 }
             }
         }
-    }
 
-        stage('Terraform Init') {
+        stage('Terraform Init - Main Creation') {
             steps {
                 dir('Terraform/main_creation') {  // Navigate to the Terraform directory
                     sh 'terraform init'  // Initialize Terraform
@@ -43,7 +42,7 @@ pipeline {
             }
         }
 
-        stage('Terraform Apply') {
+        stage('Terraform Apply - Main Creation') {
             steps {
                 dir('Terraform/main_creation') {
                     sh 'terraform apply -auto-approve'  // Apply Terraform configuration
