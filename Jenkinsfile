@@ -29,8 +29,7 @@ pipeline {
         stage('Terraform Apply') {
             steps {
                 dir('terraform') {
-                        sh 'terraform apply -auto-approve'  // Apply Terraform configuration
-                    }
+                    sh 'terraform apply -auto-approve'  // Apply Terraform configuration
                 }
             }
         }
