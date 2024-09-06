@@ -18,7 +18,7 @@ pipeline {
                     branches: [[name: '*/maran']],  // Adjust branch name as needed
                     userRemoteConfigs: [[
                         url: 'https://github.com/Ahmedyehia12/LibraryManagmentSystem.git',
-                        credentialsId: 'MarwanMohammed2500/******'  // Jenkins credential ID for GitHub
+                        credentialsId: 'GH-Pat'  // Jenkins credential ID for GitHub
                     ]]
                 ])
             }
