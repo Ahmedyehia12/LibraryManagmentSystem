@@ -59,7 +59,10 @@ environment {
     
     post {
         always {
-            cleanWs()  // Clean workspace after build
+            // Ensure this step is executed in a node context
+            node {
+                cleanWs()
+            }
         }
     }
 }
