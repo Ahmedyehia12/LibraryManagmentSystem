@@ -2,7 +2,7 @@ pipeline {
     agent any  // Use any available Jenkins agent
 
     environment {
-        AWS_CREDENTIALS = credentials('aws-credentials-id')  // Jenkins credential ID for AWS
+        AWS_CREDENTIALS = credentials('aws-creds-id')  // Jenkins credential ID for AWS
         AWS_REGION = 'eu-central-1'  // Set to your AWS region
     }
     
