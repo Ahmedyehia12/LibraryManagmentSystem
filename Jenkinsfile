@@ -20,7 +20,7 @@ pipeline {
 
         stage('Terraform Init') {
             steps {
-                dir('terraform') {  // Navigate to the Terraform directory
+                dir('Terraform') {  // Navigate to the Terraform directory
                     sh 'terraform init'  // Initialize Terraform
                 }
             }
@@ -28,7 +28,7 @@ pipeline {
 
         stage('Terraform Apply') {
             steps {
-                dir('terraform') {
+                dir('Terraform') {
                     sh 'terraform apply -auto-approve'  // Apply Terraform configuration
                 }
             }
