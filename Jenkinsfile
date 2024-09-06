@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        TF_VAR_credentials = credentials('your-cloud-provider-credentials-id') // Cloud provider credentials
+        TF_VAR_credentials = credentials('your-cloud-provider-credentials-id') // Ensure this ID matches your Jenkins credentials
     }
     stages {
         stage('Checkout') {
@@ -43,7 +43,10 @@ pipeline {
     }
     post {
         always {
-            cleanWs() // Clean workspace after build
+            // Ensure cleanWs is inside a node block to provide necessary context
+            node {
+                cleanWs() // Clean workspace after build
+            }
         }
         success {
             echo 'Terraform apply and destroy cycle completed successfully.'
