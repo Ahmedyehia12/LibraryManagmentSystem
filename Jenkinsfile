@@ -4,6 +4,12 @@ pipeline {
         pollSCM('* * * * *')  // Poll the SCM for changes every minute
     }
 
+environment {
+    AWS_ACCESS_KEY_ID = credentials('AKIAZI2LGPGWWB2A52XS')
+    AWS_SECRET_ACCESS_KEY = credentials('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')
+}
+
+    
     stages {
         stage('Checkout') {
             steps {
