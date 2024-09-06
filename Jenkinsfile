@@ -59,7 +59,6 @@ environment {
     
     post {
         always {
-            // Ensure this step is executed in a node context
             node {
                 cleanWs()
             }
