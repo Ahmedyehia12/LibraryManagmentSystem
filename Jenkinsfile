@@ -1,11 +1,5 @@
 pipeline {
     agent any  // Use any available Jenkins agent
-
-    environment {
-        AWS_CREDENTIALS = credentials('aws-creds-id')  // Jenkins credential ID for AWS
-        AWS_REGION = 'eu-central-1'  // Set to your AWS region
-    }
-    
     triggers {
         pollSCM('* * * * *')  // Poll the SCM for changes every minute
     }
@@ -35,7 +29,6 @@ pipeline {
         stage('Terraform Apply') {
             steps {
                 dir('terraform') {
-                    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-creds-id']]) {
                         sh 'terraform apply -auto-approve'  // Apply Terraform configuration
                     }
                 }
