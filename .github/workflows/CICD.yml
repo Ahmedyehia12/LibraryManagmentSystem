@@ -60,18 +60,17 @@ jobs:
           kubectl apply -f service.yaml
 
       - name: Get Load Balancer IP
+        id: get_load_balancer_ip
         run: |
           sleep 60
           loadBalancerIP=$(kubectl get svc library-management-service -o jsonpath="{.status.loadBalancer.ingress[0].hostname}")
           echo "Load Balancer IP: $loadBalancerIP"
+          echo "::set-output name=load_balancer_ip::$loadBalancerIP"
 
-    outputs:
-      load_balancer_ip:
-        description: 'The IP of the Load Balancer'
-        value: ${{ steps.get_load_balancer_ip.outputs.load_balancer_ip }}
-
-    cleanup:
-      runs-on: ubuntu-latest
-      steps:
-        - name: Clean Workspace
-          run: rm -rf ${{ github.workspace }}
+  cleanup:
+    runs-on: ubuntu-latest
+    if: always()
+    needs: build_and_deploy
+    steps:
+      - name: Clean Workspace
+        run: rm -rf ${{ github.workspace }}
