@@ -112,15 +112,29 @@ resource "aws_iam_role" "eks_cluster_role" {
   })
 }
 
-resource "aws_iam_role_policy_attachment" "eks_cluster_role_attach_managed" {
+# Attach AmazonEC2FullAccess Policy
+resource "aws_iam_role_policy_attachment" "eks_cluster_role_attach_ec2_full_access" {
   role       = aws_iam_role.eks_cluster_role.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2FullAccess"  # Example managed policy
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2FullAccess"
+}
+
+# Attach AmazonEKSClusterPolicy
+resource "aws_iam_role_policy_attachment" "eks_cluster_role_attach_eks_cluster_policy" {
+  role       = aws_iam_role.eks_cluster_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
+}
+
+# Attach AmazonEKSServicePolicy
+resource "aws_iam_role_policy_attachment" "eks_cluster_role_attach_eks_service_policy" {
+  role       = aws_iam_role.eks_cluster_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSServicePolicy"
 }
 
 
+
 # IAM Role for EKS Node Group
-resource "aws_iam_role" "eks_node_role" {
-  name = "eks-node-role"
+resource "aws_iam_role" "team5_eks_node_role" {
+  name = "team5-eks-node-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
@@ -139,7 +153,8 @@ resource "aws_iam_role" "eks_node_role" {
   managed_policy_arns = [
     "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
     "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
-    "arn:aws:iam::aws:policy/AmazonEC2ContainerServiceRole"
+    "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceRole",
+    "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
   ]
 }
 
@@ -159,12 +174,10 @@ module "eks_node_group" {
   source           = "./modules/eks-node-group"
   cluster_name     = module.eks_cluster.cluster_name
   node_group_name  = "team5-node-group"
-  node_role_arn    = aws_iam_role.eks_node_role.arn
+  node_role_arn    = aws_iam_role.team5_eks_node_role.arn
   subnet_ids       = [
     module.team5_public_subnet1.subnet_id,
-    module.team5_public_subnet2.subnet_id,
-    module.team5_private_subnet1.subnet_id,
-    module.team5_private_subnet2.subnet_id
+    module.team5_public_subnet2.subnet_id
   ]
   desired_size     = 1
   max_size         = 1
