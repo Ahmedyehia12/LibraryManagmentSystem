@@ -51,6 +51,11 @@ pipeline {
             post {
                 // Mark the build as failed if this stage fails
                 failure {
+                    script {
+                        // Set a flag to indicate the stage failed
+                        currentBuild.result = 'FAILURE'
+                        env.TERRAFORM_BACKEND_APPLY_FAILED = 'true'
+                    }
                     echo 'Terraform Apply - Backend failed.'
                 }
             }
@@ -58,10 +63,8 @@ pipeline {
 
         stage('Terraform Init - Main Creation') {
             when {
-                // Skip this stage if the previous stage failed
-                not {
-                    stage('Terraform Apply - Backend').result == 'FAILURE'
-                }
+                // Skip this stage if the Terraform Apply - Backend stage failed
+                expression { env.TERRAFORM_BACKEND_APPLY_FAILED != 'true' }
             }
             steps {
                 dir('Terraform/main-creation') {
@@ -69,14 +72,22 @@ pipeline {
                     sh 'terraform init'
                 }
             }
+            post {
+                failure {
+                    script {
+                        // Set a flag to indicate the stage failed
+                        currentBuild.result = 'FAILURE'
+                        env.TERRAFORM_MAIN_INIT_FAILED = 'true'
+                    }
+                    echo 'Terraform Init - Main Creation failed.'
+                }
+            }
         }
 
         stage('Terraform Apply - Main Creation') {
             when {
-                // Skip this stage if the previous stage failed
-                not {
-                    stage('Terraform Init - Main Creation').result == 'FAILURE'
-                }
+                // Skip this stage if the Terraform Init - Main Creation stage failed
+                expression { env.TERRAFORM_MAIN_INIT_FAILED != 'true' }
             }
             steps {
                 dir('Terraform/main-creation') {
