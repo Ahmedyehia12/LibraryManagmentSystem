@@ -1,0 +1,83 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_IMAGE_NAME = 'library-system-final'
+        DOCKER_IMAGE_TAG = 'latest'
+        GITHUB_REPO = 'https://github.com/Ahmedyehia12/LibraryManagmentSystem'
+        EKS_CLUSTER_NAME = 'team5-eks-cluster'
+        AWS_REGION = 'eu-central-1'
+    }
+      triggers {
+        githubPush()  // This triggers the pipeline on every push to the repo
+    }
+
+
+    stages {
+        stage('Checkout Code') {
+            steps {
+                git url: "${GITHUB_REPO}", branch: 'main', credentialsId: 'github-token-id'
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    // Ensure Dockerfile is in the correct directory
+                    sh 'docker build -t ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} .'
+                }
+            }
+        }
+
+     stage('Push Docker Image') {
+    steps {
+        withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials-id', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+            script {
+                // Login to Docker Hub
+                sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
+
+                // Tag the Docker image
+                sh 'docker tag ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} ${DOCKER_USERNAME}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}'
+
+                // Push the Docker image and capture output
+                sh '''
+                set -x
+                docker push ${DOCKER_USERNAME}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} 2>&1 | tee docker_push.log
+                '''
+            }
+        }
+    }
+}
+
+
+        stage('Deploy to EKS') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'aws-credentials-id', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                    script {
+                        sh 'aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID'
+                        sh 'aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY'
+                        sh 'aws configure set region ${AWS_REGION}'
+                        sh "aws eks --region ${AWS_REGION} update-kubeconfig --name ${EKS_CLUSTER_NAME}"
+                        sh 'kubectl apply -f Deployment/library-management-deployment.yaml'
+                        sh 'kubectl apply -f Deployment/service.yaml'
+                    }
+                }
+            }
+        }
+
+        stage('Get Load Balancer IP') {
+            steps {
+                script {
+                    sleep(time: 60, unit: 'SECONDS')
+                    def loadBalancerIP = sh(script: 'kubectl get svc library-management-service -o jsonpath="{.status.loadBalancer.ingress[0].hostname}"', returnStdout: true).trim()
+                    echo "Load Balancer IP: ${loadBalancerIP}"
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            cleanWs()
+        }
+    }
+}
