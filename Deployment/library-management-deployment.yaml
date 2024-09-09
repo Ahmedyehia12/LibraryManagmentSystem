@@ -15,5 +15,6 @@ spec:
       containers:
         - name: library-management-container
           image: ahmedyehia32/library-system-final
+          imagePullPolicy: Always   # Ensures image is always pulled from the registry
           ports:
             - containerPort: 5000
