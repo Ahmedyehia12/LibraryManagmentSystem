@@ -118,4 +118,3 @@ stage('Checkout SCM') {
             echo 'Pipeline succeeded!'
         }
     }
-}
