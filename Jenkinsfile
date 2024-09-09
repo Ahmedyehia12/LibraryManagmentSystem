@@ -7,18 +7,19 @@ pipeline {
         AWS_SECRET_ACCESS_KEY = ''
     }
 
-stage('Checkout SCM') {
-    steps {
-        // Checkout the code from the Git repository
-        checkout([$class: 'GitSCM', branches: [[name: '*/maran']],
-            doGenerateSubmoduleConfigurations: false, 
-            extensions: [], 
-            submoduleCfg: [], 
-            userRemoteConfigs: [[url: 'https://github.com/Ahmedyehia12/LibraryManagmentSystem', credentialsId: 'c6d6be8b-c4b5-450b-a13c-1b8aca95fc69']]
-        ])
-    }
-}
-
+    stages {
+        stage('Checkout SCM') {
+            steps {
+                // Checkout the code from the Git repository
+                checkout([$class: 'GitSCM', 
+                          branches: [[name: '*/maran']],
+                          doGenerateSubmoduleConfigurations: false, 
+                          extensions: [], 
+                          submoduleCfg: [], 
+                          userRemoteConfigs: [[url: 'https://github.com/Ahmedyehia12/LibraryManagmentSystem', credentialsId: 'c6d6be8b-c4b5-450b-a13c-1b8aca95fc69']]
+                ])
+            }
+        }
 
         stage('Setup Plugin Cache Directory') {
             steps {
@@ -49,7 +50,6 @@ stage('Checkout SCM') {
                 }
             }
             post {
-                // Mark the build as failed if this stage fails
                 failure {
                     script {
                         // Set a flag to indicate the stage failed
@@ -96,7 +96,6 @@ stage('Checkout SCM') {
                 }
             }
             post {
-                // Mark the build as failed if this stage fails
                 failure {
                     echo 'Terraform Apply - Main Creation failed.'
                 }
@@ -118,3 +117,4 @@ stage('Checkout SCM') {
             echo 'Pipeline succeeded!'
         }
     }
+}
