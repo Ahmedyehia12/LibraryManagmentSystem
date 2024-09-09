@@ -38,11 +38,6 @@ pipeline {
         }
 
         stage('Terraform Apply - Backend') {
-            environment {
-                // Load AWS credentials from Jenkins credentials store
-                AWS_ACCESS_KEY_ID = credentials('aws-creds')
-                AWS_SECRET_ACCESS_KEY = credentials('aws-creds')
-            }
             steps {
                 dir('Terraform/backend-init') {
                     // Apply Terraform configurations with AWS credentials
