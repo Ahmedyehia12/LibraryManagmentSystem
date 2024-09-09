@@ -56,7 +56,7 @@ pipeline {
                 expression { currentBuild.result != 'FAILURE' }
             }
             steps {
-                dir('Terraform/main-creation') {
+                dir('Terraform/main_creation') {
                     sh 'terraform init'
                 }
             }
@@ -67,7 +67,7 @@ pipeline {
                 expression { currentBuild.result != 'FAILURE' }
             }
             steps {
-                dir('Terraform/main-creation') {
+                dir('Terraform/main_creation') {
                     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-creds']]) {
                         sh 'terraform apply -auto-approve'
                     }
@@ -79,7 +79,7 @@ pipeline {
                         currentBuild.result = 'FAILURE'
                         echo 'Terraform Apply - Main Creation failed. Cleaning up...'
                         // Clean up resources created in the main creation stage
-                        dir('Terraform/main-creation') {
+                        dir('Terraform/main_creation') {
                             withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-creds']]) {
                                 sh 'terraform destroy -auto-approve'
                             }
