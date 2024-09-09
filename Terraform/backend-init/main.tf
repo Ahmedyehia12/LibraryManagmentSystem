@@ -1,6 +1,8 @@
 provider "aws" {
   region = "eu-central-1"
+  version = "~> 3.0"
 }
+
 
 resource "aws_s3_bucket" "terraform_state" {
   bucket = "team5-terraform-state-bucket"
