@@ -60,6 +60,20 @@ pipeline {
                     sh 'terraform init'
                 }
             }
+            post {
+                failure {
+                    script {
+                        currentBuild.result = 'FAILURE'
+                        echo 'Terraform Init - Main Creation failed. Cleaning up...'
+                        // Clean up resources created in the backend stage
+                        dir('Terraform/backend-init') {
+                            withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-creds']]) {
+                                sh 'terraform destroy -auto-approve'
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         stage('Terraform Apply - Main Creation') {
@@ -78,11 +92,13 @@ pipeline {
                     script {
                         currentBuild.result = 'FAILURE'
                         echo 'Terraform Apply - Main Creation failed. Cleaning up...'
+                        // Clean up resources created in the main creation stage
                         dir('Terraform/main_creation') {
                             withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-creds']]) {
                                 sh 'terraform destroy -auto-approve'
                             }
                         }
+                        // Clean up resources created in the backend stage
                         dir('Terraform/backend-init') {
                             withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-creds']]) {
                                 sh 'terraform destroy -auto-approve'
