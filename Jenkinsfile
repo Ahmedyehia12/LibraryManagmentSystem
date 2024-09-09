@@ -7,18 +7,18 @@ pipeline {
         AWS_SECRET_ACCESS_KEY = ''
     }
 
-    stages {
-        stage('Checkout SCM') {
-            steps {
-                // Checkout the code from the Git repository
-                checkout([$class: 'GitSCM', branches: [[name: '*/maran']],
-                    doGenerateSubmoduleConfigurations: false, 
-                    extensions: [], 
-                    submoduleCfg: [], 
-                    userRemoteConfigs: [[url: 'https://github.com/Ahmedyehia12/LibraryManagmentSystem']]
-                ])
-            }
-        }
+stage('Checkout SCM') {
+    steps {
+        // Checkout the code from the Git repository
+        checkout([$class: 'GitSCM', branches: [[name: '*/maran']],
+            doGenerateSubmoduleConfigurations: false, 
+            extensions: [], 
+            submoduleCfg: [], 
+            userRemoteConfigs: [[url: 'https://github.com/Ahmedyehia12/LibraryManagmentSystem', credentialsId: 'c6d6be8b-c4b5-450b-a13c-1b8aca95fc69']]
+        ])
+    }
+}
+
 
         stage('Setup Plugin Cache Directory') {
             steps {
