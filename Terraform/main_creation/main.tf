@@ -46,7 +46,7 @@ module "team5_private_subnet2" {
 
 
 module "team5_internet_gateway" {
-  source = "./modules/igw"
+  source = "./modules/internet-gateway"
   vpc_id = module.team5_vpc.vpc_id
   name   = "team5-igw"
 }
@@ -159,7 +159,7 @@ resource "aws_iam_role" "team5_eks_node_role" {
 }
 
 module "eks_cluster" {
-  source          = "./modules/eks"
+  source          = "./modules/eks-cluster"
   cluster_name    = "team5-eks-cluster"
   cluster_role_arn = aws_iam_role.eks_cluster_role.arn
   subnet_ids      = [
