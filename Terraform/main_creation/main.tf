@@ -52,7 +52,7 @@ module "team5_internet_gateway" {
 }
 
 module "team5_nat_gateway" {
-  source    = "./modules/nat"
+  source    = "./modules/nat-gateway"
   subnet_id = module.team5_public_subnet1.subnet_id
   name      = "team5-nat-gateway"
 }
