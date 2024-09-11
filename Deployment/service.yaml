@@ -6,7 +6,10 @@ spec:
   selector:
     app: library-management
   ports:
-  - protocol: TCP
-    port: 80
-    targetPort: 5000
+    - protocol: TCP
+      port: 80
+      targetPort: 5000
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
   type: LoadBalancer
