@@ -1,13 +1,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: prometheus-service
+  name: grafana
   namespace: monitoring
 spec:
   selector:
-    app: prometheus
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/instance: grafana
   ports:
     - protocol: TCP
       port: 80
-      targetPort: 9090
+      targetPort: 3000
   type: LoadBalancer

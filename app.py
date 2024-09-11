@@ -1,8 +1,13 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify, flash, session
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from prometheus_client import start_http_server, Counter
 #hi there
 import json
 #trying commit
+
+
+# Create a metric to track the number of requests
+REQUEST_COUNTER = Counter('http_requests_total', 'Total number of HTTP requests')
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -269,6 +274,7 @@ def signup():
 # the root route should direct to the login page
 @app.route('/')
 def root():
+    REQUEST_COUNTER.inc()  # Increment the counter
     return redirect(url_for('login'))
 
 
@@ -289,4 +295,5 @@ def add_admin():
 
 
 if __name__ == '__main__':
+    start_http_server(8000)
     app.run(host="0.0.0.0", port=5000)
