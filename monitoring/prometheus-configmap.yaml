@@ -10,5 +10,6 @@ data:
 
     scrape_configs:
       - job_name: 'library-management'
+        metrics_path: '/metrics'
         static_configs:
-          - targets: ['library-management-service:80']
+          - targets: ['library-management-service:8000']  # Ensure this port is correct

@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify, flash, session
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
-from prometheus_client import start_http_server, Counter
+from prometheus_client import generate_latest, start_http_server, Counter
 #hi there
 import json
 #trying commit
@@ -269,6 +269,10 @@ def signup():
             return redirect(url_for('login'))
         flash('Username already exists')
     return render_template('signup.html')
+
+@app.route('/metrics')
+def metrics():
+    return generate_latest()
 
 
 # the root route should direct to the login page
