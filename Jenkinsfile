@@ -78,6 +78,7 @@ pipeline {
                 }
             }
         }
+    }
 
         stage('Terraform Apply - Main Creation') {
             when {
