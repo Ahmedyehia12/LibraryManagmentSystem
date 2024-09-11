@@ -59,8 +59,9 @@ pipeline {
             }
             steps {
                 dir('Terraform/main_creation') {
-                    sh 'terraform init'
-                }
+                    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-creds']]) {
+                        sh 'terraform init'
+                    }
             }
             post {
                 failure {
