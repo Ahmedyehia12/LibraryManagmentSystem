@@ -116,7 +116,7 @@ pipeline {
 
     post {
         always {
-            cleanWs() // Ensure cleanWs is called in the appropriate block
+                cleanWs() // Wrap cleanWs inside a node block
         }
         failure {
             echo 'Pipeline failed!'
