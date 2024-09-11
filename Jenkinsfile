@@ -3,7 +3,8 @@ pipeline {
     environment {
         AWS_ACCESS_KEY_ID = credentials('AKIAZI2LGPGWSATRXO4Z')
         AWS_SECRET_ACCESS_KEY = credentials('RDI2/XCWf8Qaik1EURBZ80ANebLDoIRwZ0gbnV/E')
-        AWS_DEFAULT_REGION = 'eu-central-1' // Optional: specify your AWS region
+        AWS_DEFAULT_REGION = 'eu-central-1'
+    }
 
     stages {
         stage('Checkout SCM') {
