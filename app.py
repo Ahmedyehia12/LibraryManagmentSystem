@@ -272,7 +272,7 @@ def signup():
 
 
 # the root route should direct to the login page
-@app.route('/')
+@app.route('/' , methods=['GET', 'POST'])
 def root():
     REQUEST_COUNTER.inc()  # Increment the counter
     return redirect(url_for('login'))
