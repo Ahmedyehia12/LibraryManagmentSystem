@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify, flash, session
+import prometheus_client
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from prometheus_client import generate_latest, start_http_server, Counter
 #hi there
@@ -272,8 +273,7 @@ def signup():
 
 @app.route('/metrics')
 def metrics():
-    return generate_latest()
-
+    return prometheus_client.generate_latest(), 200, {'Content-Type': prometheus_client.CONTENT_TYPE_LATEST}
 
 # the root route should direct to the login page
 @app.route('/' , methods=['GET', 'POST'])
