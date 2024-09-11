@@ -1,0 +1,7 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'library-management'
+    static_configs:
+      - targets: ['library-management-service:80']

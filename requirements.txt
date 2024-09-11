@@ -7,3 +7,4 @@ Jinja2==3.1.4
 jsonify==0.5
 MarkupSafe==2.1.5
 Werkzeug==3.0.3
+prometheus_client
