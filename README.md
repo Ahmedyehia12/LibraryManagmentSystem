@@ -1,6 +1,3 @@
-Here is a draft of the README file based on the provided project information:
-
----
 
 # Banque Misr Internship 2024 - Library Management System
 
