@@ -62,6 +62,7 @@ pipeline {
                     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-creds']]) {
                         sh 'terraform init'
                     }
+                }
             }
             post {
                 failure {
@@ -78,7 +79,6 @@ pipeline {
                 }
             }
         }
-    }
 
         stage('Terraform Apply - Main Creation') {
             when {
@@ -116,7 +116,7 @@ pipeline {
 
     post {
         always {
-                cleanWs() // Wrap cleanWs inside a node block
+            cleanWs() // Ensure cleanWs is called in the appropriate block
         }
         failure {
             echo 'Pipeline failed!'
