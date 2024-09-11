@@ -110,6 +110,3 @@ The Library Management System provides basic functionalities for both admins and
 - Prometheus was used to collect metrics from the application.
 - Grafana was integrated with Prometheus for visualization via a dashboard.
 
----
-
-This draft README provides a comprehensive overview of the project. You can modify or add additional sections based on specific project requirements or details from the internship.
