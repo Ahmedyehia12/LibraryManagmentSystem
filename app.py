@@ -221,7 +221,7 @@ def return_book(isbn): # Function to return a borrowed book
     return redirect(url_for('index_user')) # Redirect to the index page
 
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         username = request.form['username']
@@ -264,6 +264,12 @@ def signup():
             return redirect(url_for('login'))
         flash('Username already exists')
     return render_template('signup.html')
+
+
+# the root route should direct to the login page
+@app.route('/')
+def root():
+    return redirect(url_for('login'))
 
 
 
