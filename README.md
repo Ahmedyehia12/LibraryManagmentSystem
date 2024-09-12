@@ -20,7 +20,12 @@ The Library Management System provides basic functionalities for both admins and
   - Add new books.
   - Add other admin users.
   - Search for books using ISBN, title, or author.
-  
+    ![image](https://github.com/user-attachments/assets/d24b226e-4235-4888-bdc4-405f46d73745)
+    ![image](https://github.com/user-attachments/assets/a0f96062-33b0-407d-b9a6-6d3a0a67a964)
+    ![image](https://github.com/user-attachments/assets/9a18a57c-57d5-422e-897b-d9607ebdb955)
+    ![image](https://github.com/user-attachments/assets/774544c0-1a10-4ed0-a6b6-16e09be7017c)
+    ![image](https://github.com/user-attachments/assets/44e57825-9bc1-4743-b789-0c53311c118b)
+
 - **Users** can:
   - Borrow and return books.
   - Search for books using ISBN, title, or author.
