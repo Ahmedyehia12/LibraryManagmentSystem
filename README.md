@@ -79,6 +79,7 @@ The Library Management System provides basic functionalities for both admins and
    - Two YAML files were used for deployment:
      - `library-management-deployment.yaml`: Defines the deployment configuration for the application.
      - `service.yaml`: Defines the service configuration for the application.
+![image](https://github.com/user-attachments/assets/21b1e169-1bbd-40ea-850c-add44d859a1f)
 
 ### 5. **CI/CD Pipeline**
    - A CI/CD pipeline was created using **Jenkins** with the following stages:
@@ -87,6 +88,7 @@ The Library Management System provides basic functionalities for both admins and
      3. **Push Docker Image**: Pushes the image to Docker Hub.
      4. **Deploy to EKS**: Deploys the application to the EKS cluster using `kubectl`.
      5. **Retrieve Load Balancer IP**: Retrieves the IP/hostname of the Load Balancer after deployment.
+![image](https://github.com/user-attachments/assets/c4a4e743-c49c-4512-9fd1-c632812ceea6)
 
 ### 6. **Monitoring and Logging**
    - **Prometheus** and **Grafana** were used for monitoring:
