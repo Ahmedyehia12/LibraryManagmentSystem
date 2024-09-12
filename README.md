@@ -73,13 +73,13 @@ The Library Management System provides basic functionalities for both admins and
      - **Backend Module**: For creating an S3 bucket to store Terraform state files and a DynamoDB table to prevent concurrent state changes.
      - **Main Infrastructure Module**: For creating VPC, subnets, Internet Gateway, NAT Gateway, and EKS clusters and node groups.
      - our main module contains a module for every AWS resource
+     - ![image](https://github.com/user-attachments/assets/21b1e169-1bbd-40ea-850c-add44d859a1f)
 
 ### 4. **Kubernetes Deployment**
    - The application was deployed on **Amazon EKS** using Kubernetes deployment and service configuration files.
    - Two YAML files were used for deployment:
      - `library-management-deployment.yaml`: Defines the deployment configuration for the application.
      - `service.yaml`: Defines the service configuration for the application.
-![image](https://github.com/user-attachments/assets/21b1e169-1bbd-40ea-850c-add44d859a1f)
 
 ### 5. **CI/CD Pipeline**
    - A CI/CD pipeline was created using **Jenkins** with the following stages:
