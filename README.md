@@ -131,6 +131,8 @@ The Library Management System provides basic functionalities for both admins and
 - ![image](https://github.com/user-attachments/assets/47cfbab5-c078-484b-9e6c-7b8c1503822f)
 
 
+## Bonus Task: Terraform Pipeline:
+This Jenkins pipeline is designed to automate the process of deploying infrastructure using Terraform. The pipeline includes stages for checking out source code from Git, initializing and applying Terraform configurations, and handling failures by cleaning up resources. Below is a detailed explanation of each stage and how the pipeline operates.
 
 - Please read the documentation as it is more detailed.
 
