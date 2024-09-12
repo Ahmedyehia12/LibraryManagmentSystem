@@ -15,6 +15,11 @@ This project was developed as part of the Banque Misr Internship 2024 by **Team 
 ## Features
 
 The Library Management System provides basic functionalities for both admins and users:
+- **Admin Page**
+- ![image](https://github.com/user-attachments/assets/739be630-2208-47e4-8ffe-a280f024a9e3)
+![image](https://github.com/user-attachments/assets/a75e010a-38bb-4ef6-b6a2-e3f3c1bb8c95)
+![image](https://github.com/user-attachments/assets/81f76552-f664-4ba5-af82-08a98cfcbb67)
+![image](https://github.com/user-attachments/assets/a6fdb307-95fb-4ced-8aa5-c8549be3f261)
 
 - **Admins** can:
   - Add new books.
