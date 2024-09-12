@@ -129,3 +129,7 @@ The Library Management System provides basic functionalities for both admins and
 - ![image](https://github.com/user-attachments/assets/47cfbab5-c078-484b-9e6c-7b8c1503822f)
 
 
+
+- Please read the documentation as it is more detailed.
+
+
