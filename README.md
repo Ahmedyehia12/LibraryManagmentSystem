@@ -73,6 +73,7 @@ The Library Management System provides basic functionalities for both admins and
      - **Backend Module**: For creating an S3 bucket to store Terraform state files and a DynamoDB table to prevent concurrent state changes.
      - **Main Infrastructure Module**: For creating VPC, subnets, Internet Gateway, NAT Gateway, and EKS clusters and node groups.
      - our main module contains a module for every AWS resource
+     - ![image](https://github.com/user-attachments/assets/21b1e169-1bbd-40ea-850c-add44d859a1f)
 
 ### 4. **Kubernetes Deployment**
    - The application was deployed on **Amazon EKS** using Kubernetes deployment and service configuration files.
@@ -87,6 +88,7 @@ The Library Management System provides basic functionalities for both admins and
      3. **Push Docker Image**: Pushes the image to Docker Hub.
      4. **Deploy to EKS**: Deploys the application to the EKS cluster using `kubectl`.
      5. **Retrieve Load Balancer IP**: Retrieves the IP/hostname of the Load Balancer after deployment.
+![image](https://github.com/user-attachments/assets/c4a4e743-c49c-4512-9fd1-c632812ceea6)
 
 ### 6. **Monitoring and Logging**
    - **Prometheus** and **Grafana** were used for monitoring:
@@ -127,5 +129,11 @@ The Library Management System provides basic functionalities for both admins and
 - Grafana Screen Shots
 - ![image](https://github.com/user-attachments/assets/0f8dad5b-8ed8-4299-89a0-2294b5246ad7)
 - ![image](https://github.com/user-attachments/assets/47cfbab5-c078-484b-9e6c-7b8c1503822f)
+
+
+## Bonus Task: Terraform Pipeline:
+This Jenkins pipeline is designed to automate the process of deploying infrastructure using Terraform. The pipeline includes stages for checking out source code from Git, initializing and applying Terraform configurations, and handling failures by cleaning up resources.
+
+<h1>Please read the documentation as it is more detailed.</h1>
 
 
