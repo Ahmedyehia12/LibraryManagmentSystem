@@ -30,10 +30,13 @@ The Library Management System provides basic functionalities for both admins and
     ![image](https://github.com/user-attachments/assets/9a18a57c-57d5-422e-897b-d9607ebdb955)
     ![image](https://github.com/user-attachments/assets/774544c0-1a10-4ed0-a6b6-16e09be7017c)
     ![image](https://github.com/user-attachments/assets/44e57825-9bc1-4743-b789-0c53311c118b)
+- **User Page**
+- ![image](https://github.com/user-attachments/assets/ef4a00bb-a993-46d1-be68-431a85469e42)
 
 - **Users** can:
   - Borrow and return books.
   - Search for books using ISBN, title, or author.
+![image](https://github.com/user-attachments/assets/08a0434e-2a3a-4376-9d7f-a20ab3806160)
 
 ## Technologies Used
 
@@ -62,6 +65,7 @@ The Library Management System provides basic functionalities for both admins and
 ### 2. **Dockerization**
    - A Dockerfile was created to containerize the application, specifying the base image, copying the application code, and installing dependencies.
    - The Docker image was pushed to **Docker Hub** for easy deployment.
+![image](https://github.com/user-attachments/assets/0ceb60b2-3ffc-49cc-b1f3-ae101cd5ff8a)
 
 ### 3. **Infrastructure as Code (IaC) with Terraform**
    - Terraform was used to manage the AWS infrastructure.
@@ -116,4 +120,11 @@ The Library Management System provides basic functionalities for both admins and
 
 - Prometheus was used to collect metrics from the application.
 - Grafana was integrated with Prometheus for visualization via a dashboard.
+- Promethues Screen Shots:
+![image](https://github.com/user-attachments/assets/ca5c0e55-5fc6-4a6f-a789-5fb7d01c3090)
+![image](https://github.com/user-attachments/assets/ae7e3ec7-7b6b-4453-bf8e-f43c11d38520)
+- Grafana Screen Shots
+- ![image](https://github.com/user-attachments/assets/0f8dad5b-8ed8-4299-89a0-2294b5246ad7)
+- ![image](https://github.com/user-attachments/assets/47cfbab5-c078-484b-9e6c-7b8c1503822f)
+
 
