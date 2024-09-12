@@ -72,6 +72,7 @@ The Library Management System provides basic functionalities for both admins and
    - Two modules were created:
      - **Backend Module**: For creating an S3 bucket to store Terraform state files and a DynamoDB table to prevent concurrent state changes.
      - **Main Infrastructure Module**: For creating VPC, subnets, Internet Gateway, NAT Gateway, and EKS clusters and node groups.
+     - our main module contains a module for every AWS resource
 
 ### 4. **Kubernetes Deployment**
    - The application was deployed on **Amazon EKS** using Kubernetes deployment and service configuration files.
